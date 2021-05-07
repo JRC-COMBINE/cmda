@@ -1,87 +1,124 @@
-
-
 import numpy as np
+import pandas as pd
 
-from ._add_functions import AddFeatures
+import concurrent.futures
+from functools import partial
+from tqdm import tqdm
+
+
+
+
+class Pipeline:
+
+    def __init__(self,importer,features, filters = None, n_jobs=-1):
+        self.importer = importer
+        self.features = features
+        self.filters = filters
+
+    def run(self,rec_path_list,pb_dir):
+
+        if not isinstance(pb_dir,list):
+            path = tuple(map(lambda x: (x, pb_dir), rec_path_list))
+        else:
+            path = zip(rec_path_list,pb_dir)
+
+        res = []
+        for p in path:
+            res.append(_pipeline(importer=self.importer, features=self.features, path = p))
+
+        return res
+
+
+    def run_p(self,rec_path_list,pb_dir):
+
+        if not isinstance(pb_dir,list):
+            path = tuple(map(lambda x: (x, pb_dir), rec_path_list))
+        else:
+            path = zip(rec_path_list,pb_dir)
+
+        pip_func = partial(_pipeline, importer = self.importer, features = self.features)
+
+        path_progress = tqdm(path)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            res = executor.map(pip_func, path_progress)
+
+        res = list(res)
+        return res
+
+
+
+def _pipeline(path,importer, features):
+    rec_path = path[0]
+    pb_dir = path[1]
+    data = importer._get_data(rec_path = rec_path, pb_dir=pb_dir)
+
+    keys = list(data.keys())
+    rec_name = keys[0]
+    fs = data['fs']
+    data = data[rec_name]
+     
+    res = features._get_features(data = data, fs=fs)
+    res = {rec_name:res}
+
+    return res
+
+
+
+
+
+
+
+def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
+    """
+    Extarct features from a dictionary containing multiple arrays.
+
+    Args:
+        feature_obj (python_object): Feature object
+        data (dict): Dictionary containing multiple arrays
+        fs (int, optional): Sampling frequency of the arrays. Defaults to 1.
+
+    Returns:
+        dict: Extracted features
+    """
+    res = {}
+    for key, x in data.items():
+        feature_obj.apply_features(x = x, fs = fs)
+        res_key = feature_obj.features
+        res_key = {f'{key}_{k}': v for k, v in res_key.items()}
+        res = {**res,**res_key}
+
+    return res
+
+
+def extract_features_dataframe(feature_obj, df: pd.DataFrame, fs: int = 1) -> dict:
+    '''
+    Extarct features from columns of a dataframe.
+
+    Args:
+        feature_obj (python_object): Feature object
+        df (pd.DataFrame): Dataframe, where each column represents an array
+        fs (int, optional): Sampling frequency of the arrays. Defaults to 1.
+
+    Returns:
+        dict: [description]
+    '''
+
+    data = df.to_dict('list')
+    res = extract_features(
+        feature_obj=feature_obj,
+        data=data,
+        fs=fs
+    )
+
+    return res
+
+
 
 class FeatureExtraction:
 
-    _udf_list = {}
+    def __init__(self,feature_obj):
+        self.feature_obj = feature_obj
 
-    def __init__(self, x):
-        self.add_feature = AddFeatures()
-        self.x = x
-        self.features = {}
-
-
-    @classmethod
-    def add_fun(cls,name,fun,labels):
-        name2 = "__"+name
-        name3 = "_FeatureExtraction"+name2      
-        setattr(cls,name3,decorator_fun(fun,labels))
-        cls._udf_list = {**cls._udf_list,**{name2:{}}}
-
-
-    def apply_features(self):
-        self._features = {**self.add_feature._ListOfFunctions,**self._udf_list}
-        for key in self._features:
-            temp_key = key
-            temp_value = self._features[key]
-            self2 = '_FeatureExtraction'+ temp_key
-            method_to_call = getattr(self, self2)
-            #method_to_call(self.x)
-            if len(temp_value) == 0:
-                method_to_call()
-            else:
-                method_to_call(**self.add_feature._ListOfFunctions[key])
-
-    def __mean(self):
-        out = np.mean(self.x)
-        out = {'mean':out}
-        self.features = {**self.features, **out}
-
-    def __max(self):
-        out = np.max(self.x)
-        out = {'max':out}
-        self.features = {**self.features, **out}
-
-    def __statistic(self):
-        out1 = np.median(self.x)
-        out2 = np.std(self.x)
-        out = {'median':out1,'std':out2}
-        self.features = {**self.features, **out}
-
-
-def decorator_fun(fun,labels):
-    if not isinstance(labels,(list,tuple)):
-        labels = [labels]
-    def wrapper_fun(self):
-        out = fun(x = self.x)
-        if not isinstance(out,(list,tuple)):
-            out = [out]
-        out = dict(zip(labels,out))
-        self.features = {**self.features,**out}
-    return wrapper_fun
-
-
-
-
-
-
-if __name__ == "__main__":
-    x = [1,2,3,4,5,6]
-
-    def fun1(x,y=4):
-        return np.min(x), np.std(x)
-
-    labels = ('min','std')
-
-    a = FeatureExtraction(x)
-    a.add_feature.mean()
-    a.add_feature.max()
-    a.add_fun('udf',fun1,labels)
-    a.apply_features()
-
-    print(a._features)
-    print(a.features)
-
+    def _get_features(self,data,fs):
+        res = extract_features(data=data, feature_obj=self.feature_obj, fs=fs)
+        return res
