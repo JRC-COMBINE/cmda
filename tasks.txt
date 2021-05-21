@@ -1,0 +1,9 @@
+
+1. autocorrelation function must be fixed
+
+
+
+
+
+# Future works
+1. save created feature object

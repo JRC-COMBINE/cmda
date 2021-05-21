@@ -4,6 +4,7 @@ import pandas as pd
 import concurrent.futures
 from functools import partial
 from tqdm import tqdm
+from itertools import zip_longest
 
 
 
@@ -80,10 +81,22 @@ def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
     Returns:
         dict: Extracted features
     """
+    if isinstance(feature_obj,dict):
+        features_keys = set(feature_obj.keys())
+        data_keys = set(data.keys())
+        if len(data_keys.difference(features_keys)) != 0:
+            raise ValueError('The feature object keys are not as same as the data keys')
+
     res = {}
     for key, x in data.items():
-        feature_obj.apply_features(x = x, fs = fs)
-        res_key = feature_obj.features
+        
+        if isinstance(feature_obj,dict):
+            obj = feature_obj[key]
+        else:
+            obj = feature_obj
+
+        obj.apply_features(x = x, fs = fs)
+        res_key = obj.features
         res_key = {f'{key}_{k}': v for k, v in res_key.items()}
         res = {**res,**res_key}
 
