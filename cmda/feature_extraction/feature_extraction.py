@@ -1,72 +1,4 @@
-import numpy as np
 import pandas as pd
-
-import concurrent.futures
-from functools import partial
-from tqdm import tqdm
-from itertools import zip_longest
-
-
-
-
-class Pipeline:
-
-    def __init__(self,importer,features, filters = None, n_jobs=-1):
-        self.importer = importer
-        self.features = features
-        self.filters = filters
-
-    def run(self,rec_path_list,pb_dir):
-
-        if not isinstance(pb_dir,list):
-            path = tuple(map(lambda x: (x, pb_dir), rec_path_list))
-        else:
-            path = zip(rec_path_list,pb_dir)
-
-        res = []
-        for p in path:
-            res.append(_pipeline(importer=self.importer, features=self.features, path = p))
-
-        return res
-
-
-    def run_p(self,rec_path_list,pb_dir):
-
-        if not isinstance(pb_dir,list):
-            path = tuple(map(lambda x: (x, pb_dir), rec_path_list))
-        else:
-            path = zip(rec_path_list,pb_dir)
-
-        pip_func = partial(_pipeline, importer = self.importer, features = self.features)
-
-        path_progress = tqdm(path)
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            res = executor.map(pip_func, path_progress)
-
-        res = list(res)
-        return res
-
-
-
-def _pipeline(path,importer, features):
-    rec_path = path[0]
-    pb_dir = path[1]
-    data = importer._get_data(rec_path = rec_path, pb_dir=pb_dir)
-
-    keys = list(data.keys())
-    rec_name = keys[0]
-    fs = data['fs']
-    data = data[rec_name]
-     
-    res = features._get_features(data = data, fs=fs)
-    res = {rec_name:res}
-
-    return res
-
-
-
-
-
 
 
 def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
@@ -95,8 +27,8 @@ def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
         else:
             obj = feature_obj
 
-        obj.apply_features(x = x, fs = fs)
-        res_key = obj.features
+        
+        res_key = obj.transform(x = x, fs = fs)
         res_key = {f'{key}_{k}': v for k, v in res_key.items()}
         res = {**res,**res_key}
 

@@ -1,0 +1,52 @@
+site_name: cmda
+site_decription: Analysis package
+
+theme:
+  name: material
+  custom_dir: 'docs/custom_theme/'
+  features:
+    - navigation.tabs
+
+
+plugins:
+  - search
+  - mkdocstrings
+  - mkdocs-jupyter:
+      include_source: True
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid-experimental
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - docs/javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Getting Started: index.md
+  - User Guide: 
+    - Import Data: user_guide/import_data.md
+    - Pre-processing:
+      - Filter Object: user_guide/filter_object.md
+    - Feature Extraction: user_guide/feature_object.md
+    - Pipeline: user_guide/pipeline.md
+  - Examples:
+    - Features: examples/feature_object.ipynb
+    - Pipeline: examples/pipeline.ipynb
+  - References:
+    - frequency-domain features: 
+      - mnf: api/fd_features/mnf.md
+      - mdf: api/fd_features/mdf.md
+      - vcf: api/fd_features/vcf.md
+      - stdf: api/fd_features/stdf.md
+      - psr: api/fd_features/psr.md
+      - peaks: api/fd_features/peaks.md

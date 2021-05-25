@@ -39,6 +39,22 @@ class Features:
     ]
 
     def __init__(self):
+        '''
+        Create a Feature object for extracting features from an array.
+        Built-in features can be added by the "add" function.
+
+        Read more in the [User Guide](../user_guide/feature_object.ipynb).
+
+        Example:
+            >>> from cmda.feature_extraction import Features
+            >>> x = [1,2,3,4,5,6,7,8]
+            >>> feature_obj = Features()
+            >>> feature_obj.add.mean()
+            >>> feature_obj.add.max()
+            >>> feature_obj.add.std()
+            >>> res = feature_obj.transform(x=x,fs=1)
+
+        '''        
         self.add = _AddFeatures()
 
     @classmethod
@@ -55,6 +71,15 @@ class Features:
 
 
     def transform(self,x,fs):
+        '''[summary]
+
+        Args:
+            x ([type]): [description]
+            fs ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        '''        
         self.ps = None
         self.freq = None
         self.welch = None
@@ -63,9 +88,8 @@ class Features:
 
         self._features = {**self.add._ListOfFunctions, **self._udf_list}
         for func_key in self._features:
-            args = self._features[func_key]
+            args = self._features[func_key].copy()
             func = func_key.split('__')
-            counter = func[1]
             func = func[0]
             if func in self._td_list:
                 method_to_call = getattr(td, func)
@@ -111,6 +135,10 @@ class Features:
 
         return f,pxx
 
+
+    def __str__(self):
+        list_of_features = {**self.add._ListOfFunctions, **self._udf_list}
+        return f"{list_of_features}"
 
     
 

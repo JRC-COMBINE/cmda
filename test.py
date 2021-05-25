@@ -49,22 +49,7 @@
 
 
 # tutorial 1
-from cmda.feature_extraction import Features
-from cmda.data import ecg_apb_sample
+def func(x=1,y=4,z=7):
+    return locals()
 
-data = ecg_apb_sample()
-x = data["ECG"]
-
-feature = Features()
-
-# add frequency-domain built-in features
-feature.add.mnf(spectrum="ps")
-feature.add.mdf(spectrum="ps")
-feature.add.stdf(spectrum="ps")
-feature.add.psr(spectrum="welch", int_limit_ratio=0.01)
-feature.add.peaks(spectrum="welch", n_peaks=1, height=True, width=True)
-feature.add.band_sum(spectrum="ps", low=1, high=7)
-feature.add.band_mnf(spectrum="ps", low=1, high=7)
-
-res = feature.transform(x=x, fs=125)
-print(res)
+print(func(x=5))
