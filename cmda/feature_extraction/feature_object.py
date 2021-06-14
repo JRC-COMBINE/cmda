@@ -4,8 +4,9 @@ from scipy import signal
 from inspect import getfullargspec
 
 from ._add_functions import _AddFeatures
-from . import td_functions as td
-from . import fd_functions as fd
+from . import time_domain_features as td
+from . import spectral_features as fd
+from . import wavelet_features as wf
 
 
 class Features:

@@ -125,7 +125,7 @@ def peaks(f,pxx,n_peaks =1, height = True, width = True):
 
 
 
-def band_sum(f,pxx,low = None ,high = None, normalize = True, log = False):
+def band_power(f,pxx,low = None ,high = None, normalize = True, log = False):
     try:
         _,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
         res= np.sum(band)

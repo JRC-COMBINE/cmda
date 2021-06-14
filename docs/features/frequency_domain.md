@@ -41,7 +41,14 @@ $$\frac{\displaystyle\sum_{j={f_0}-n}^{j={f_0}+n} P_j}{\displaystyle\sum_{j=1}^{
 where $f_0$ is the peak frequency, $n$ is the integral limit, $P_j$ is the power spectrum at the frequency bin j, and M is the length of frequency bin.
 
 # Band Power
-band sum
+Band power is the power spectral density in a specified bandwidth. It can be computed as follows:
+$$\displaystyle\sum_{j=f_low}^{j=f_high} P_j$$
+
+if normalize by the total power density:
+
+$$\frac{\displaystyle\sum_{j=f_low}^{j=f_high} P_j}{\displaystyle\sum_{j=1}^{M} P_j}$$
+
+where $f_low$ and $f_high$ are the low and high frequency band, $P_j$ is the power spectrum at the frequency bin j, and M is the length of frequency bin.
 
 # Band Power Standard Deviation
 

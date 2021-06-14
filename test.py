@@ -46,10 +46,7 @@
 # a.transform(x=x, fs=1)
 # print(a._features)
 # print(a.features)
+x = range(4,10)
 
 
-# tutorial 1
-def func(x=1,y=4,z=7):
-    return locals()
-
-print(func(x=5))
+print(x[-1])

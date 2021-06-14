@@ -13,7 +13,8 @@ plugins:
   - mkdocstrings
   - mkdocs-jupyter:
       include_source: True
-
+  - with-pdf:
+      render_js: True
 
 markdown_extensions:
   - admonition
@@ -39,10 +40,23 @@ nav:
       - Filter Object: user_guide/filter_object.md
     - Feature Extraction: user_guide/feature_object.md
     - Pipeline: user_guide/pipeline.md
+    - Clustering: user_guide/wave_features.md
   - Examples:
     - Features: examples/feature_object.ipynb
+    - Feature Extraction: examples/feature_extraction.ipynb
     - Pipeline: examples/pipeline.ipynb
   - References:
+    - time-domain features: 
+      - mean: api/td_features/mean.md
+      - median: api/td_features/median.md
+      - max: api/td_features/max.md
+      - min: api/td_features/min.md
+      - std: api/td_features/std.md
+      - kurtosis: api/td_features/kurtosis.md
+      - skewness: api/td_features/skewness.md
+      - p2p: api/td_features/p2p.md
+      - rms: api/td_features/rms.md
+      - zcr: api/td_features/zcr.md
     - frequency-domain features: 
       - mnf: api/fd_features/mnf.md
       - mdf: api/fd_features/mdf.md
@@ -50,3 +64,8 @@ nav:
       - stdf: api/fd_features/stdf.md
       - psr: api/fd_features/psr.md
       - peaks: api/fd_features/peaks.md
+      - band_sum: api/fd_features/band_sum.md
+      - band_std: api/fd_features/band_std.md
+      - band_mnf: api/fd_features/band_mnf.md
+      - band_mdf: api/fd_features/band_mdf.md
+    

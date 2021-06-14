@@ -20,16 +20,16 @@ A list of all the available features can be seen in the following tables:
 ### Time-domain Features
 | Feature     | Description                          |
 | :-----------: | :------------------------------------: |
-| `mean`       | mean |
-| `max`       | maximum |
-| `min`    | minimum |
-| `std`    | standard deviation |
-| `median`    | median |
-| `skewness`    | skewness |
-| `kurtosis`    | kurtosis |
-| `p2p`    | peak to peak distance |
-| `rms`    | root mean square |
-| `zcr`    | zero crossing rate                                |
+| [`mean`](../api/td_features/mean.md)       | mean |
+| [`max`](../api/td_features/max.md)       | maximum |
+| [`min`](../api/td_features/min.md)    | minimum |
+| [`std`](../api/td_features/std.md)    | standard deviation |
+| [`median`](../api/td_features/median.md)    | median |
+| [`skewness`](../api/td_features/skewness.md)    | skewness |
+| [`kurtosis`](../api/td_features/kurtosis.md)    | kurtosis |
+| [`p2p`](../api/td_features/p2p.md)    | peak to peak distance |
+| [`rms`](../api/td_features/rms.md)    | root mean square |
+| [`zcr`](../api/td_features/zcr.md)    | zero crossing rate                                |
 
 ### Frequency-domain Features
 | Feature     | Description                          |

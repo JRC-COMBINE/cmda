@@ -5,7 +5,7 @@ import concurrent.futures
 from functools import partial
 from tqdm import tqdm
 
-from ..feature_extraction.feature_extraction import extract_features
+from ..feature_extraction.feature_extraction import _extract_features
 from ..filter.filter_object import apply_filters
 
 
@@ -46,16 +46,20 @@ class Pipeline:
 
 def _pipeline(path,importer,features,filters):
 
-    data = importer._get_data(path = path)
+    data = importer._get_data(iterator = path)
+    iswin = importer.iswin
 
     keys = list(data.keys())
     rec_name = keys[0]
     fs = data['fs']
+    win = data['window']
     data = data[rec_name]
 
     if filters is not None:
         data = apply_filters(filter_obj=filters,data=data,fs=fs)
      
-    res = extract_features(feature_obj=features,data=data,fs=fs)
+    res = _extract_features(feature_obj=features,data=data,fs=fs)
+    if iswin:
+        rec_name = f"{rec_name}__{win}"
 
     return rec_name,res

@@ -12,6 +12,7 @@ class ReadWFDB:
 
     def __init__(self, record_names, public_dir, channels: Optional[list] = None):
         self.channels = channels
+        self.iswin = False
         self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
 
     def _iterator(self,rec_path_list,pb_dir):
@@ -33,6 +34,51 @@ class ReadWFDB:
             sampto=sampto
         )
 
+        return res
+
+
+
+class RollingWindowWFDB:
+
+    def __init__(self, record_names, public_dir, channels, win_len, step=None):
+        self.channels = channels
+        self.win_len = win_len
+        self.step = step
+        self.iswin = True
+        self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
+
+    def _iterator(self,rec_path_list,pb_dir):
+        if not isinstance(pb_dir,list):
+            itr = list(map(lambda x: (x, pb_dir), rec_path_list))
+        else:
+            itr = list(zip(rec_path_list,pb_dir))
+
+        iterator = []
+        for rec_path,pb in itr:
+            record_name, sig_len, sig_name, fs = _get_rec_info(
+                record_path=rec_path, pb_dir=pb
+            )
+
+            bins = get_bins(n = sig_len, win_len = self.win_len, step = self.step, fs = fs)
+
+            for win in bins:
+                iterator.append((rec_path,pb,win))
+
+        return iterator
+
+
+    def _get_data(self,iterator):
+        rec_path,pb_dir,samples = iterator
+        sampfrom = samples[0]
+        sampto = samples[-1]
+
+        res = _read_wfdb(
+            record_path= rec_path,
+            pb_dir = pb_dir,
+            channel_names= self.channels,
+            sampfrom = sampfrom,
+            sampto=sampto
+        )
         return res
 
 
@@ -127,9 +173,24 @@ def _read_wfdb(
     data = record.p_signal
     data = dict(zip(channel_names, data.transpose()))
 
-    res = {record_name: data, 'fs':fs}
+    res = {record_name: data, 'fs':fs, 'window':(sampfrom,sampto)}
 
     return res
+
+
+def get_bins(n, win_len, step = None, fs = 1):
+    
+    if step is None:
+        step = win_len
+
+    # TODO: add warning in case of bin_lin > n
+    # TODO: action to the last bin
+    win_len = int(win_len*fs)
+    step = int(step*fs)
+    n_bins = int(np.floor((n-win_len)/step)+1)
+    bins = [range((i*step),(i*step)+win_len) for i in range(0,n_bins)]
+    return bins
+
 
 
 if __name__ == "__main__":

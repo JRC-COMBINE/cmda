@@ -1,7 +1,11 @@
 import pandas as pd
 
 
-def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
+
+
+
+
+def _extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
     """
     Extarct features from a dictionary containing multiple arrays.
 
@@ -35,7 +39,7 @@ def extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
     return res
 
 
-def extract_features_dataframe(feature_obj, df: pd.DataFrame, fs: int = 1) -> dict:
+def extract_features(feature_obj, data: (dict,pd.DataFrame), fs: int = 1) -> dict:
     '''
     Extarct features from columns of a dataframe.
 
@@ -48,22 +52,13 @@ def extract_features_dataframe(feature_obj, df: pd.DataFrame, fs: int = 1) -> di
         dict: [description]
     '''
 
-    data = df.to_dict('list')
-    res = extract_features(
+    if isinstance(data,pd.DataFrame):
+        data = data.to_dict('list')
+
+    res = _extract_features(
         feature_obj=feature_obj,
         data=data,
         fs=fs
     )
 
     return res
-
-
-
-class FeatureExtraction:
-
-    def __init__(self,feature_obj):
-        self.feature_obj = feature_obj
-
-    def _get_features(self,data,fs):
-        res = extract_features(data=data, feature_obj=self.feature_obj, fs=fs)
-        return res
