@@ -1,19 +1,22 @@
 # Import Data
 
-```cmda.import_data``` library has handful modules to import continuous data from different sources, such as local disk, server or Physionet database.
+```cmda.import_data``` library has handful modules to import continuous data from local disk or Physionet databases.
 
 The availabe modules are as follows:
 
 ## ImportWFDB
-```cmda.import_data.ImportWFDB``` is a module built over [*wfdb*](https://wfdb.readthedocs.io/en/latest/index.html) package to import [**WFDB Physionet**](https://physionet.org/about/database/) databases. An example of using this module is shown [here].
+```cmda.import_data.ImportWFDB``` is a module, which utilizes [*wfdb*](https://wfdb.readthedocs.io/en/latest/index.html) package to import [**WFDB Physionet**](https://physionet.org/about/database/) databases. An example of using this module is shown [here].
+
+## RollingWindowWFDB
+```cmda.import_data.RollingWindowWFDB``` is a module similar to ```cmda.import_data.ImportWFDB``` for reading [**WFDB Physionet**](https://physionet.org/about/database/) databases and segementing the data sequence in a rolling window manner. A tutorial of using this module can be found [here].
 
 ## ImportCSV
-```cmda.import_data.ImportCSV``` is a module to read *csv* files. An example of using this module can be found [here].
+```cmda.import_data.ImportCSV``` is a module to read *CSV* files. An example of using this module can be found [here].
 !!! note
-    the csv files must constains signals as columns and temporal instances as rows.
+    the csv files must constain signals as columns and temporal instances as rows.
 
-## ImportFeather
-```cmda.import_data.ImportCSV``` is a module to read *feather* files. An example of using this module can be found [here].
+## RollingWindowCSV
+```cmda.import_data.ImportCSV``` is a module similar to ```cmda.import_data.RollingWindowCSV``` for importing *CSV* files and segementing the data sequence in a rolling window manner. A tutorial of using this module can be found [here].
 !!! note
-    the csv files must constains signals as columns and temporal instances as rows.
+    the csv files must constain signals as columns and temporal instances as rows.
 

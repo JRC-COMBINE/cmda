@@ -10,15 +10,38 @@ from typing import Optional
 
 class ReadCSV:
     def __init__(
-        self, files_list, channels: Optional[list] = None, fs: int = 1, **kwargs
+        self, files_list, channels = None, fs: int = 1, **kwargs
     ):
+        '''
+        Read multiple signals with CSV formats.
+
+        The module imports signals (time-series) database with csv format, 
+        where each CSV files columns represent the signals and rows the time instances.
+
+        Args:
+            files_list ({str} or {list}): list of CSV files' paths or the path
+                to directory containg the CSV files.
+            channels (list, optional): list of the column names (signals) to import. 
+                If None, all the columns are imported. Defaults to None.
+            fs (int, optional): Sampling frequency of the data. Defaults to 1.
+        '''    
         self.channels = channels
         self.kwargs = kwargs
         self.fs = fs
         self.iswin = False
         self.iterator = self._iterator(files_list=files_list)
 
-    def load(self,n_jobs=1):
+    def load(self,n_jobs=None):
+        '''
+        load the data.
+
+        Args:
+            n_jobs (int, optional): The number of OpenMP processes to use for reading the data. 
+            ```None``` means using all processors. Defaults to None.
+
+        Returns:
+            dict: imported data as a dictionary, where the keys are the record names.
+        '''        
         iterator = self.iterator
         if n_jobs == 1:
             iterator_progress = tqdm(iterator)
@@ -65,6 +88,23 @@ class RollingWindowCSV:
         fs: int = 1,
         **kwargs
     ):
+        '''
+        Read multiple CSV formats with segmentation.
+
+        The module imports signals (time-series) database with csv format and 
+        segments them in a rolling window manner.
+        where each CSV files columns represent the signals and rows the time instances.
+
+        Args:
+            files_list ([type]): files_list ({str} or {list}): list of CSV files' paths or the path
+                to directory containg the CSV files.
+            win_len (float): length of window in seconds.
+            step (float, optional): length of moving window steps in seconds. 
+                If None, the step length is equalt to the window length. Defaults to None.
+            channels (list, optional): list of the column names (signals) to import. 
+                If None, all the columns are imported. Defaults to None.
+            fs (int, optional): Sampling frequency of the data. Defaults to 1.
+        '''    
         self.channels = channels
         self.kwargs = kwargs
         self.win_len = win_len
@@ -88,6 +128,27 @@ class RollingWindowCSV:
             "window": (iterator[1][0], iterator[1][-1]),
         }
         return res
+
+    def load(self,n_jobs=None):
+        '''
+        load the data
+
+        Args:
+            n_jobs (int, optional): The number of OpenMP processes to use for reading the data. 
+            ```None``` means using all processors. Defaults to None.
+
+        Returns:
+            dict: imported data as a dictionary, where the keys are the record names.
+        '''        
+        iterator = self.iterator
+        if n_jobs == 1:
+            iterator_progress = tqdm(iterator)
+            res = map(self._get_data, iterator_progress)
+        else:
+            executer = concurrent.futures.ProcessPoolExecutor(max_workers= n_jobs)
+            res = tqdm(executer.map(self._get_data, iterator), total=len(iterator))
+
+        return list(res)
 
     def _iterator(self, files_list):
         if isinstance(files_list, list):

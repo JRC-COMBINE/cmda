@@ -13,8 +13,8 @@ plugins:
   - mkdocstrings
   - mkdocs-jupyter:
       include_source: True
-  - with-pdf:
-      render_js: True
+  # - with-pdf:
+  #     render_js: True
 
 markdown_extensions:
   - admonition
@@ -36,8 +36,7 @@ nav:
   - Getting Started: index.md
   - User Guide: 
     - Import Data: user_guide/import_data.md
-    - Pre-processing:
-      - Filter Object: user_guide/filter_object.md
+    - Pre-processing: user_guide/filter_object.md
     - Feature Extraction: user_guide/feature_object.md
     - Pipeline: user_guide/pipeline.md
     - Clustering: user_guide/wave_features.md

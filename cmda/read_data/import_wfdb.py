@@ -1,5 +1,6 @@
 import os
-
+import concurrent
+from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from typing import Optional
@@ -10,11 +11,47 @@ import wfdb
 
 class ReadWFDB:
 
-    def __init__(self, record_names, public_dir, channels: Optional[list] = None):
+    def __init__(self, record_names, public_dir=None, channels=None):
+        '''
+        Read multiple records of a WFDB [(Physionet waveform database)].
+
+        The module imports multiple records of a WFDB [(Physionet waveform database)] (https://physionet.org/about/database/)
+        from either a local disk or Physionet server.
+
+        Args:
+            record_names (list): list of record names or records paths.
+            public_dir ({str} or {list}, optional): in case of importing the data from Physionet server,
+                public directory of the WFDB or list of public directories.
+                For importing from a local disk, must be set to None. Defaults to None.
+            channels (list, optional): list of the channel names (signals) to import. 
+                If None, all the channels are imported. Defaults to None.
+        '''   
         self.channels = channels
         self.iswin = False
         self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
 
+    def load(self,n_jobs=None):
+        '''
+        load the data
+
+        Args:
+            n_jobs (int, optional): The number of OpenMP processes to use for reading the data. 
+            ```None``` means using all processors. Defaults to None.
+
+        Returns:
+            dict: imported data as a dictionary, where the keys are the record names.
+        '''        
+        iterator = self.iterator
+        print("Loading the data ...")
+        if n_jobs == 1:
+            iterator_progress = tqdm(iterator)
+            res = map(self._get_data, iterator_progress)
+        else:
+            executer = concurrent.futures.ProcessPoolExecutor(max_workers= n_jobs)
+            res = tqdm(executer.map(self._get_data, iterator), total=len(iterator))
+
+        return list(res)
+    
     def _iterator(self,rec_path_list,pb_dir):
         if not isinstance(pb_dir,list):
             iterator = tuple(map(lambda x: (x, pb_dir), rec_path_list))
@@ -40,13 +77,51 @@ class ReadWFDB:
 
 class RollingWindowWFDB:
 
-    def __init__(self, record_names, public_dir, channels, win_len, step=None):
+    def __init__(self, record_names, public_dir, win_len, step=None, channels=None):
+        '''
+        Read multiple records of a WFDB [(Physionet waveform database)].
+
+        The module imports multiple records of a WFDB [(Physionet waveform database)] (https://physionet.org/about/database/)
+        from either a local disk or Physionet server.
+
+        Args:
+            record_names (list): list of record names or records paths.
+            public_dir ({str} or {list}, optional): in case of importing the data from Physionet server,
+                public directory of the WFDB or list of public directories.
+                For importing from a local disk, must be set to None. Defaults to None.
+            win_len (float): length of window in seconds.
+            step (float, optional): length of moving window steps in seconds. 
+                If None, the step length is equalt to the window length. Defaults to None.
+            channels (list, optional): list of the channel names (signals) to import. 
+                If None, all the channels are imported. Defaults to None.
+        '''  
         self.channels = channels
         self.win_len = win_len
         self.step = step
         self.iswin = True
         self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
 
+    def load(self,n_jobs=None):
+        '''
+        load the data
+
+        Args:
+            n_jobs (int, optional): The number of OpenMP processes to use for reading the data. 
+            ```None``` means using all processors. Defaults to None.
+
+        Returns:
+            dict: imported data as a dictionary, where the keys are the record names.
+        '''        
+        iterator = self.iterator
+        if n_jobs == 1:
+            iterator_progress = tqdm(iterator)
+            res = map(self._get_data, iterator_progress)
+        else:
+            executer = concurrent.futures.ProcessPoolExecutor(max_workers= n_jobs)
+            res = tqdm(executer.map(self._get_data, iterator), total=len(iterator))
+
+        return list(res)
+    
     def _iterator(self,rec_path_list,pb_dir):
         if not isinstance(pb_dir,list):
             itr = list(map(lambda x: (x, pb_dir), rec_path_list))
@@ -54,6 +129,7 @@ class RollingWindowWFDB:
             itr = list(zip(rec_path_list,pb_dir))
 
         iterator = []
+        print("Initializing the segmentation ...")
         for rec_path,pb in itr:
             record_name, sig_len, sig_name, fs = _get_rec_info(
                 record_path=rec_path, pb_dir=pb
