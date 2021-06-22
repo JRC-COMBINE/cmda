@@ -17,7 +17,7 @@ class _AddFeatures:
     def _add2list(self,args,func_name):
         func_name_ = func_name+"__0"
 
-        while func_name in self._ListOfFunctions:
+        while func_name_ in self._ListOfFunctions:
             func_name_splited = func_name_.split('__')
             new_func_name = int(func_name_splited[1])+1
             func_name_ = f'{func_name}__{str(new_func_name)}'
@@ -469,7 +469,7 @@ class _AddFeatures:
             {'band_power': 0.50}
         '''        
         args = _get_args(locals())
-        self._add2list(args = args, func_name='band_sum')
+        self._add2list(args = args, func_name='band_power')
 
     def band_std(self,spectrum='ps',low = None ,high = None, normalize = True, **kwargs):
         '''
@@ -547,6 +547,11 @@ class _AddFeatures:
         '''
         args = _get_args(locals())
         self._add2list(args = args, func_name='band_mdf')
+
+
+    def swt_features(self,features,wavelet, level, start_level = 1):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='swt_features')
 
 
 

@@ -134,7 +134,7 @@ def band_power(f,pxx,low = None ,high = None, normalize = True, log = False):
     except:
         res = np.nan
 
-    res = {'band_sum':res}
+    res = {f'power_[{low},{high}]Hz':res}
     return res
 
 
@@ -145,10 +145,10 @@ def band_std(f,pxx,low = None ,high = None, normalize = True, log = False):
         if normalize:
             res = res/np.mean(pxx)
 
-        res = {'band_std':res}
     except:
-        res = {'band_std':np.nan}
+        res = np.nan
 
+    res = {f'std_[{low},{high}]Hz':res}
     return res
 
 
@@ -161,7 +161,7 @@ def band_mnf(f,pxx,low = None ,high = None, log = False):
     except:
         res = np.nan
 
-    res = {'band_mnf':res}
+    res = {f'mnf_[{low},{high}]Hz':res}
     return res
 
 
@@ -174,7 +174,7 @@ def band_mdf(f,pxx,low = None ,high = None, log = False):
     except:
         res = np.nan
 
-    res = {'band_mnf':res}
+    res = {f'mdf_[{low},{high}]Hz':res}
     return res
 
 

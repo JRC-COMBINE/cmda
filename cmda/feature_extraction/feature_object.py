@@ -32,7 +32,7 @@ class Features:
         'vcf',
         'psr',
         'peaks',
-        'band_sum',
+        'band_power',
         'band_std',
         'band_mnf',
         'band_mdf',
@@ -109,7 +109,7 @@ class Features:
                 method_to_call = getattr(self, func_key)
                 res = method_to_call(x=x)
             
-            res = _check_duplicated_key_names(res=res,res_all=res_all)
+            # res = _check_duplicated_key_names(res=res,res_all=res_all)
             
             res_all = {**res_all, **res}
 

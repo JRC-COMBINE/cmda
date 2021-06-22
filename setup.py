@@ -13,7 +13,7 @@ req_packs = [
 
 
 setup(name='CMDA',
-      version='0.0.1',
+      version='0.0.11',
       description='Continuous Monitoring Data Analysis',
       author='Pejman Farhadi Ghalati',
       author_email='farhadi@combine.rwth-aachen.de',

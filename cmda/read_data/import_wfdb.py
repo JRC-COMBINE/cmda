@@ -60,9 +60,9 @@ class ReadWFDB:
 
         return iterator
 
-    def _get_data(self,path,sampfrom=0,sampto=None):
-        rec_path = path[0]
-        pb_dir = path[1]
+    def _get_data(self,iterator,sampfrom=0,sampto=None):
+        rec_path = iterator[0]
+        pb_dir = iterator[1]
         res = _read_wfdb(
             record_path= rec_path,
             pb_dir = pb_dir,
