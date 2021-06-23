@@ -549,7 +549,7 @@ class _AddFeatures:
         self._add2list(args = args, func_name='band_mdf')
 
 
-    def swt_features(self,features,wavelet, level, start_level = 1):
+    def swt_features(self,features,wavelet, level, start_level = 1,**kwargs):
         args = _get_args(locals())
         self._add2list(args = args, func_name='swt_features')
 

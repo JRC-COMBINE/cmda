@@ -13,9 +13,7 @@ print(x)
 
 feature_obj = Features()
 
-feature_obj.add.mnf()
-feature_obj.add.band_power(low=1,high=10)
-feature_obj.add.band_power(low=10,high=20)
+feature_obj.add.swt_features(wavelet='db5',features = ['mean','var','skew'],level=5, start_level=2)
 
 res = feature_obj.transform(x,fs=125)
 

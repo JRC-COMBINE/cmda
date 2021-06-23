@@ -54,6 +54,7 @@ def mean(x, nan_omit=False, min_samples=1):
     Returns:
         float: the average of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean
     )
@@ -75,6 +76,7 @@ def std(x, nan_omit=False, min_samples=1):
     Returns:
         float: the standard deviation of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.std, nanfunc=np.nanstd
     )
@@ -96,6 +98,7 @@ def max(x, nan_omit=False, min_samples=1):
     Returns:
         float: the maximum value of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.max, nanfunc=np.nanmax
     )
@@ -117,6 +120,7 @@ def min(x, nan_omit=False, min_samples=1):
     Returns:
         float: the minimum of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.min, nanfunc=np.nanmin
     )
@@ -138,6 +142,7 @@ def median(x, nan_omit=False, min_samples=1):
     Returns:
         float: the median of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x,
         nan_omit=nan_omit,
@@ -165,6 +170,7 @@ def kurtosis(x, nan_omit=False, min_samples=1):
     '''
     # create the nankurtosis of stats.kurtosis
     nankurtosis = partial(stats.kurtosis, nan_policy="omit")
+    x = _check_ndarray(x)
     res = _nanfunction(
         x,
         nan_omit=nan_omit,
@@ -190,6 +196,7 @@ def skewness(x, nan_omit=False, min_samples=1):
     Returns:
         float: the skewness of x.
     '''
+    x = _check_ndarray(x)
     if nan_omit:
         if np.count_nonzero(~np.isnan(x)) >= min_samples:
             res = stats.skew(x[~np.isnan(x)])
@@ -216,6 +223,7 @@ def p2p(x, nan_omit=False, min_samples=1):
     Returns:
         float: the peak to peak value of x.
     '''
+    x = _check_ndarray(x)
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.max, nanfunc=np.nanmax
     ) - _nanfunction(
@@ -240,6 +248,7 @@ def rms(x, nan_omit=False, min_samples=1):
     Returns:
         float: the root mean square of x.
     '''
+    x = _check_ndarray(x)
     res = np.sqrt(_nanfunction(
         x**2, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean
     ))
@@ -267,8 +276,7 @@ def zcr(x, center=True, nan_omit=False, min_samples=1):
         float: the mean crossing rate of.
     '''
     # center the x
-    x = _check_ndarray(x).copy()
-
+    x = _check_ndarray(x)
     if center:
         x -= _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean

@@ -53,6 +53,11 @@ class ReadWFDB:
         return list(res)
     
     def _iterator(self,rec_path_list,pb_dir):
+        # if rec_path_list is None:
+        #     if pb_dir is None:
+        #         raise ValueError("When recored_names is None, a public_dir must be set")
+        #     else:
+        #         rec_path_list = wfdb.io.get_record_list(db_dir=pb_dir)
         if not isinstance(pb_dir,list):
             iterator = tuple(map(lambda x: (x, pb_dir), rec_path_list))
         else:

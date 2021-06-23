@@ -21,7 +21,7 @@ def swt(x, wavelet, level = 1, start_level = 0):
     return coeffs
 
 
-def swt_features(x,features,wavelet, level, start_level = 1):
+def swt_features(x,features,wavelet, level, start_level = 1,**kwargs):
     _available_features = [
         'mean',
         'var',

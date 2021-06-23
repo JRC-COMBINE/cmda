@@ -39,6 +39,10 @@ class Features:
         'band_stdf'
     ]
 
+    _wf_list = [
+        'swt_features'
+    ]
+
     def __init__(self):
         '''
         Create a Feature object for extracting features from an array.
@@ -94,6 +98,9 @@ class Features:
             func = func[0]
             if func in self._td_list:
                 method_to_call = getattr(td, func)
+                res = method_to_call(x=x,**args)
+            elif func in self._wf_list:
+                method_to_call = getattr(wf, func)
                 res = method_to_call(x=x,**args)
             elif func in self._fd_list:
                 method_to_call = getattr(fd, func)
