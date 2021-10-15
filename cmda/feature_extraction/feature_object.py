@@ -25,6 +25,12 @@ class Features:
         'p2p',
         'zcr'
     ]
+
+    _ps_list = [
+        'periodogram',
+        'welch'
+    ]
+
     _fd_list = [
         'mnf',
         'mdf',
@@ -99,6 +105,9 @@ class Features:
             if func in self._td_list:
                 method_to_call = getattr(td, func)
                 res = method_to_call(x=x,**args)
+            elif func in self._ps_list:
+                method_to_call = getattr(td, func)
+                res = method_to_call(x=x,fs=fs,**args)
             elif func in self._wf_list:
                 method_to_call = getattr(wf, func)
                 res = method_to_call(x=x,**args)

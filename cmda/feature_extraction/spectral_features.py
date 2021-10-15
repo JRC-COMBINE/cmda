@@ -3,6 +3,7 @@ import numpy as np
 from scipy import signal, integrate, stats
 import time
 
+
 def mnf(f,pxx):
     '''
     Compute the mean frequency of a spectrum

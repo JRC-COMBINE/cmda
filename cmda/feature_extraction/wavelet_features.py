@@ -24,7 +24,7 @@ def swt(x, wavelet, level = 1, start_level = 0):
 def swt_features(x,features,wavelet, level, start_level = 1,**kwargs):
     _available_features = [
         'mean',
-        'var',
+        'std',
         'kurt',
         'skew',
         'rms',
@@ -46,8 +46,8 @@ def swt_features(x,features,wavelet, level, start_level = 1,**kwargs):
         for f in features:
             if f == 'mean':
                 res = np.mean(c)
-            elif f == 'var':
-                res = np.var(c)
+            elif f == 'std':
+                res = np.std(c)
             elif f == 'kurt':
                 res = stats.kurtosis(c)
             elif f == 'skew':

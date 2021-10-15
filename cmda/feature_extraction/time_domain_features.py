@@ -287,6 +287,53 @@ def zcr(x, center=True, nan_omit=False, min_samples=1):
     return res
 
 
+def periodogram(x, fs=1.0, band=None, window='boxcar', nfft=None, detrend='constant', scaling='density',log=False):
+
+    f,pxx = signal.periodogram(
+        x=x,
+        fs=fs,
+        window=window,
+        nfft=nfft,
+        detrend=detrend,
+        scaling=scaling
+    )
+    if band is not None:
+        band_idx = np.logical_and(f >= band[0] , f <= band[1])
+        pxx = pxx[band_idx]
+        f = f[band_idx]
+
+    if log:
+        pxx = np.log10(pxx)
+
+    res = {f'ps_{i}_Hz':j for i,j in zip(f,pxx)}
+    return res
+
+
+def welch(x, fs=1.0, band=None, window='hann', nperseg=None, noverlap=None, nfft=None, detrend='constant', scaling='density', average='mean', log=False):
+
+    f,pxx = signal.welch(
+        x=x,
+        fs=fs,
+        window=window,
+        nperseg=nperseg,
+        noverlap=noverlap,
+        nfft=nfft,
+        detrend=detrend,
+        scaling=scaling,
+        average=average
+    )
+
+    if band is not None:
+        band_idx = np.logical_and(f >= band[0] , f <= band[1])
+        pxx = pxx[band_idx]
+        f = f[band_idx]
+
+    if log:
+        pxx = np.log10(pxx)
+
+    res = {f'welch_{i}_Hz':j for i,j in zip(f,pxx)}
+    return res
+
 #TODO auto correlation must be fixed
 def autocorr(x,fs,center = True):
     pass

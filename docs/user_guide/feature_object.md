@@ -29,22 +29,25 @@ A list of all the available features can be seen in the following tables:
 | [`kurtosis`](../api/td_features/kurtosis.md)    | kurtosis |
 | [`p2p`](../api/td_features/p2p.md)    | peak to peak distance |
 | [`rms`](../api/td_features/rms.md)    | root mean square |
-| [`zcr`](../api/td_features/zcr.md)    | zero crossing rate                                |
+| [`zcr`](../api/td_features/zcr.md)    | zero crossing rate|
+| [`perm_entropy`](../api/td_features/zcr.md)    | permutation entropy|
+| [`sample_entropy`](../api/td_features/zcr.md)    | sample entropy|
 
 ### Frequency-domain Features
 | Feature     | Description                          |
 | :-----------: | :------------------------------------: |
 | [`mnf`](../api/fd_features/mnf.md)       | mean frequency |
 | [`mdf`](../api/fd_features/mdf.md)       | median frequency |
-| `vcf`    | variance of central frequency |
-| `stdf`    | standard deviation of central frequency |
-| `psr`    | power spectral ratio |
-| `peaks`    | peaks of spectrum |
-| `band_sum`    | energy of a spectrum band |
-| `band_std`    | power standard deviation of a spectrum band |
-| `band_mnf`    | mean frequency of a spectrum band |
-| `band_mdf`    | median frequency of a spectrum band |
-| `band_stdf`    | standard deviation of central frequency of a spectrum band|
+| [`vcf`](../api/fd_features/vcf.md)     | variance of central frequency |
+| [`stdf`](../api/fd_features/stdf.md)     | standard deviation of central frequency |
+| [`psr`](../api/fd_features/psr.md)     | power spectral ratio |
+| [`peaks`](../api/fd_features/peaks.md)     | peaks of spectrum |
+| [`spectral_entropy`](../api/fd_features/peaks.md)     | spectral entropy |
+| [`band_power`](../api/fd_features/band_sum.md)     | energy of a spectrum band |
+| [`band_std`](../api/fd_features/band_std.md)    | power standard deviation of a spectrum band |
+| [`band_mnf`](../api/fd_features/band_mnf.md)    | mean frequency of a spectrum band |
+| [`band_mdf`](../api/fd_features/band_mdf.md)    | median frequency of a spectrum band |
+| [`band_stdf`](../api/fd_features/band_stdf.md)    | standard deviation of central frequency of a spectrum band|
 
 ### Example
 A complete tutorial of implementing the feature object can be found [here](../examples/feature_object.ipynb)

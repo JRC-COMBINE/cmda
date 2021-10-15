@@ -225,6 +225,15 @@ class _AddFeatures:
         self._add2list(args = args, func_name='zcr')
 
 
+    def periodogram(self,band=None, window='boxcar', nfft=None, detrend='constant', scaling='density', log=False):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='periodogram')
+
+
+    def welch(self,band=None, window='hann', nperseg=None, noverlap=None, nfft=None, detrend='constant', scaling='density', average='mean', log=False):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='welch')
+
     def mnf(self,spectrum='ps',**kwargs):
         '''
         Add the ```cmda.spectral_frequency.mnf``` function to the features.

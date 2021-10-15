@@ -6,7 +6,7 @@ from functools import partial
 from tqdm import tqdm
 
 from ..feature_extraction.feature_extraction import _extract_features
-from ..filter.filter_object import apply_filters
+from ..preprocessing.filter_object import apply_filters
 
 
 
