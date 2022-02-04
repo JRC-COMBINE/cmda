@@ -557,6 +557,42 @@ class _AddFeatures:
         args = _get_args(locals())
         self._add2list(args = args, func_name='band_mdf')
 
+    def band_agg(self,spectrum='ps',low = None ,high = None, **kwargs):
+        '''
+        Add ```cmda.spectral_features.band_agg``` function to the features.
+        
+        The feature object returns the median frequency of a specified frequency band.
+
+        Args:
+            spectrum ({'ps','welch'}, optional): method to calculate the power spectrum. Defaults to 'ps'.
+            low (float, optional): low frequency band. if None, the minimum frequency is selected. Defaults to None.
+            high (float, optional): high frequency band. if None, the maximum frequency is selected. Defaults to None.
+
+        Example:
+            >>> import numpy as np
+            >>> from cmda.feature_extraction import Features
+            >>> fs = 1000
+            >>> t = np.arange(5000)
+            >>> x = np.sin(0.03*t) + np.cos(0.3*t+4)
+            >>> feature_obj = Features()
+            >>> feature_obj.add.band_mdf(spectrum="ps", low=2, high=15, normalize=True)
+            >>> feature_obj.transform(x=x,fs=fs)
+            {'band_mdf': 4.80}
+        '''
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='band_agg')
+
+    def spectral_entropy(self,normalized=True,spectrum='ps',**kwargs):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='spectral_entropy')
+
+    def perm_entropy(self,m=3,tau=1):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='perm_entropy')
+
+    def sample_entropy(self,m=2,tau=1,down_ratio=0.2, std_ratio=0.2):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='sample_entropy')
 
     def swt_features(self,features,wavelet, level, start_level = 1,**kwargs):
         args = _get_args(locals())

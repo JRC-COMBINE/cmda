@@ -4,7 +4,7 @@ from scipy import signal, integrate, stats
 import time
 
 
-def mnf(f,pxx):
+def mnf(f,pxx, _dict_out = True):
     '''
     Compute the mean frequency of a spectrum
 
@@ -21,11 +21,12 @@ def mnf(f,pxx):
     except:
         res = np.nan
 
-    res = {'mnf':res}
+    if _dict_out:
+        res = {'mnf':res}
     return res
 
 
-def mdf(f,pxx):
+def mdf(f,pxx,_dict_out=True):
     '''
     Compute the median frequency of a spectrum
 
@@ -41,11 +42,12 @@ def mdf(f,pxx):
     except:
         res = np.nan
 
-    res = {'mdf':res}
+    if _dict_out:
+        res = {'mdf':res}
     return res
 
 
-def vcf(f,pxx):
+def vcf(f,pxx,_dict_out=True):
     '''
     Compute the variance of central frequency
 
@@ -62,11 +64,13 @@ def vcf(f,pxx):
     except:
         res = np.nan
 
-    res = {'vcf':res}
+    if _dict_out:
+        res = {'vcf':res}
+
     return res
 
 
-def stdf(f,pxx):
+def stdf(f,pxx,_dict_out=True):
     '''
     Compute the standard deviation frequency of a spectrum
 
@@ -80,11 +84,13 @@ def stdf(f,pxx):
     variance = vcf(f=f,pxx=pxx)
     res = np.sqrt(variance['vcf'])
 
-    res = {'stdf':res}
+    if _dict_out:
+        res = {'stdf':res}
+
     return res
 
 
-def psr(f,pxx, int_limit_ratio = 0.01):
+def psr(f,pxx, int_limit_ratio = 0.01,_dict_out=True):
     try:
         n = int_limit_ratio*np.max(f)
         f0 = f[np.argmax(pxx[1:])+1]
@@ -93,7 +99,9 @@ def psr(f,pxx, int_limit_ratio = 0.01):
     except:
         res = np.nan
 
-    res = {f'psr_{int_limit_ratio}':res}
+    if _dict_out:
+        res = {f'psr_{int_limit_ratio}':res}
+
     return res
 
 
@@ -126,7 +134,7 @@ def peaks(f,pxx,n_peaks =1, height = True, width = True):
 
 
 
-def band_power(f,pxx,low = None ,high = None, normalize = True, log = False):
+def band_power(f,pxx,low = None ,high = None, normalize = True, log = False, _dict_out=True):
     try:
         _,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
         res= np.sum(band)
@@ -135,50 +143,80 @@ def band_power(f,pxx,low = None ,high = None, normalize = True, log = False):
     except:
         res = np.nan
 
-    res = {f'power_[{low},{high}]Hz':res}
+    if _dict_out:
+        res = {f'power_[{low},{high}]Hz':res}
+
     return res
 
 
-def band_std(f,pxx,low = None ,high = None, normalize = True, log = False):
-    try:
-        _,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
-        res= np.std(band)
-        if normalize:
-            res = res/np.mean(pxx)
 
-    except:
-        res = np.nan
+def band_mnf(f,pxx,low = None ,high = None, log = False,_dict_out=True):
 
-    res = {f'std_[{low},{high}]Hz':res}
+    f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+    res= mnf(f=f_band,pxx=band,_dict_out=False)
+
+    if _dict_out:
+        res = {f'mnf_[{low},{high}]Hz':res}
+
     return res
 
 
-def band_mnf(f,pxx,low = None ,high = None, log = False):
+def band_mdf(f,pxx,low = None ,high = None, log = False,_dict_out=True):
     
-    try:
-        f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
-        res= mnf(f=f_band,pxx=band)
-        res = res['mnf']
-    except:
-        res = np.nan
+    f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+    res= mdf(f=f_band,pxx=band,_dict_out=False)
 
-    res = {f'mnf_[{low},{high}]Hz':res}
+    if _dict_out:
+        res = {f'mdf_[{low},{high}]Hz':res}
+
     return res
 
+def band_peak(f,pxx,low = None ,high = None, log = False,_dict_out=True):
 
-def band_mdf(f,pxx,low = None ,high = None, log = False):
+    f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+    argmax = np.argmax(band)
+    res = f_band[argmax]
+
+    if _dict_out:
+        res = {f'freq_peak_[{low},{high}]Hz':res}
+
+    return res
+
+def band_entropy(f,pxx,low = None ,high = None, log = False,_dict_out=True):
     
-    try:
-        f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
-        res= mdf(f=f_band,pxx=band)
-        res = res['mdf']
-    except:
-        res = np.nan
+    f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+    res = spectral_entropy(f=f_band,pxx=band,_dict_out=False)
 
-    res = {f'mdf_[{low},{high}]Hz':res}
+    if _dict_out:
+        res = {f'entropy_[{low},{high}]Hz':res}
+
     return res
 
 
+def band_agg(f,pxx,low = None ,high = None, log = False):
+    
+    f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+
+
+    mnf_res = mnf(f=f_band,pxx=band,_dict_out=False)
+    vcf_res = vcf(f=f_band,pxx=band,_dict_out=False)
+    argmax = np.argmax(band)
+    peak = f_band[argmax]
+    entropy = spectral_entropy(f=f_band,pxx=band,_dict_out=False)
+    try:
+        power = np.sum(band)
+        power = power/np.sum(pxx)
+    except:
+        power = np.nan
+
+    res = {
+        f'power_[{low},{high}]Hz':power,
+        # f'mnf_[{low},{high}]Hz':mnf_res,
+        f'vcf_[{low},{high}]Hz':vcf_res,
+        f'peak_[{low},{high}]Hz':peak,
+        f'entropy_[{low},{high}]Hz':entropy
+    }
+    return res
 
 def _band_func(f,pxx,low = None ,high = None,log = False):
     
@@ -199,6 +237,17 @@ def _band_func(f,pxx,low = None ,high = None,log = False):
     return f_band,band
 
 
+def spectral_entropy(f,pxx,normalize=True, _dict_out=True):
+    try:
+        res = stats.entropy(pxx, base=2)
+        if normalize:
+            res /= np.log2(pxx.size)
+    except:
+        res = np.nan
+
+    if _dict_out:
+        res = {'spectral_entropy':res}
+    return res
 
 def _check_any_nan(x):
     if np.isnan(x).any():

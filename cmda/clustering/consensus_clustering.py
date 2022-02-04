@@ -12,6 +12,7 @@ from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, fcluster
+from scipy import sparse
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -45,8 +46,8 @@ class ConsenusClustering:
         self.resampling_ratio = resampling_ratio
         self.n_it = n_it
 
-    def fit_predict(self,X):
-        M = conensus_matrix(X,models=self.models, resampling_ratio=self.resampling_ratio, n_it=self.n_it)
+    def fit_predict(self,X,n_jobs=4):
+        M = consensus_matrix_p(X,models=self.models, resampling_ratio=self.resampling_ratio, n_it=self.n_it, n_jobs=n_jobs)
         labels = hierarchical_clustering(M,n_clusters=self.n_clusters,threshold=self.threshold)
         self.score = score(M,labels)
         l = pd.DataFrame(labels)
@@ -57,7 +58,7 @@ class ConsenusClustering:
         return labels
 
 
-def conensus_matrix(X,models,resampling_ratio=0.7,n_it=100):
+def consensus_matrix(X,models,resampling_ratio=0.7,n_it=100):
     n = X.shape[0]
     dist = np.zeros(shape=(n,n))
     count = np.zeros(shape=(n,n))
@@ -78,35 +79,48 @@ def conensus_matrix(X,models,resampling_ratio=0.7,n_it=100):
     return M
 
 
-def conensus_matrix_p(X,model,sampling_ratio=0.7,n_it=100, n_jobs=4):
-    n = X.shape[0]
-    pip_func = partial(con_mat,X=X,n=n, model=model, sampling_ratio=sampling_ratio)
+def consensus_matrix_p(X,model,sampling_ratio=0.7,n_it=10, n_jobs=4):
+    
+    pip_func = partial(_con_mat,X=X, model=model, sampling_ratio=sampling_ratio)
     iterator = range(n_it)
-    s = time.perf_counter()
+#     s = time.perf_counter()
     with ProcessPoolExecutor(max_workers = n_jobs) as executer:
         res = executer.map(pip_func, iterator)
     
+    
+    res = zip(*res)
+    res = list(res)
+    D = sum(res[0])
+    C = sum(res[1])
 
+    M = D.toarray()/C.toarray()
+    M = np.nan_to_num(M, nan=0, posinf=0, neginf=0)
+    return M
+
+
+
+def _con_mat(iterator,X,model,sampling_ratio):
+    
+    n = X.shape[0]
     dist = np.zeros(shape=(n,n))
     count = np.zeros(shape=(n,n))
-    print(time.perf_counter()-s)
 
-
-    for idx,labels in res:
-        dist_sample = pdist(labels.reshape(-1,1), metric='cityblock')
-        dist_sample[dist_sample!=0]=1
-        dist_sample = squareform(dist_sample)
-        dist[np.ix_(idx,idx)] += dist_sample
-        count[np.ix_(idx,idx)] += 1
-    M = dist/count
-    return res
-
-
-def con_mat(iterator,X,n,model,sampling_ratio=0.7):
-    idx = random.sample(range(n),int(np.round(sampling_ratio*n)))
-    labels = model.fit_predict(X[idx,:])
-    return idx,labels
-
+    idx = random.sample(range(n),int(np.round(0.7*n)))
+    X_idx = X[idx,:]
+    labels = model.fit_predict(X_idx)
+    
+    # print(iterator)
+    dist_sample = pdist(labels.reshape(-1,1))
+    dist_sample[dist_sample!=0]=1
+    dist_sample = squareform(dist_sample)
+    dist[np.ix_(idx,idx)] = dist[np.ix_(idx,idx)] + dist_sample
+    count[np.ix_(idx,idx)] += 1
+    
+    dist_sparse = sparse.csr_matrix(dist)
+    count_sparse = sparse.csr_matrix(count)
+    
+    return (dist_sparse, count_sparse)
+    # return count_sparse
 
 
 def hierarchical_clustering(dist,n_clusters,method='ward', threshold=0.3):
@@ -176,7 +190,7 @@ def score(M,labels):
 
 
 if __name__ == "__main__":
-    X,y = make_blobs(n_samples=1000, n_features=10, centers=4, cluster_std=(4,12,14,4), random_state=42)
+    X,y = make_blobs(n_samples=3000, n_features=10, centers=4, cluster_std=(12,4,12,6), random_state=42)
     # random_state = 49
     # n_samples = 5000
     # X = []
@@ -198,16 +212,21 @@ if __name__ == "__main__":
     # print(X.shape)
 
 
-    models = [KMeans(n_clusters=4)]
+    model = KMeans(n_clusters=2)
+
 
     s = time.perf_counter()
-    M = conensus_matrix(X=X,models=models, n_it=100)
+    M = consensus_matrix_p(X=X,model=model, n_it=100, n_jobs=4)
     print(time.perf_counter()-s)
+    
 
-    # print('unparallel')
-    # s = time.perf_counter()
-    # M = conensus_matrix(X=X,model=model, n_it=100)
-    # print(time.perf_counter()-s)
+
+    
+
+    print('unparallel')
+    s = time.perf_counter()
+    M = consensus_matrix(X=X,models=[model], n_it=100)
+    print(time.perf_counter()-s)
 
 
     # labels = hierarchical_clustering(M,n_clusters=4, thershold=0.15)

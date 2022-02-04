@@ -23,7 +23,9 @@ class Features:
         'kurtosis',
         'rms',
         'p2p',
-        'zcr'
+        'zcr',
+        'perm_entropy',
+        'sample_entropy'
     ]
 
     _ps_list = [
@@ -42,7 +44,9 @@ class Features:
         'band_std',
         'band_mnf',
         'band_mdf',
-        'band_stdf'
+        'band_stdf',
+        'band_agg',
+        'spectral_entropy'
     ]
 
     _wf_list = [
@@ -110,7 +114,7 @@ class Features:
                 res = method_to_call(x=x,fs=fs,**args)
             elif func in self._wf_list:
                 method_to_call = getattr(wf, func)
-                res = method_to_call(x=x,**args)
+                res = method_to_call(x=x,fs=fs,**args)
             elif func in self._fd_list:
                 method_to_call = getattr(fd, func)
                 spectrum = args['spectrum']
