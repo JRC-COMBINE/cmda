@@ -598,7 +598,17 @@ class _AddFeatures:
         args = _get_args(locals())
         self._add2list(args = args, func_name='swt_features')
 
+    def hrv_time_domain_features(self, nan_lim_ratio=0.1):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='hrv_time_domain_features')
 
+    def hrv_spectral_features(self,fs, method="cubic"):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='hrv_spectral_features')
+
+    def hrv_nonlinear_features(self):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='hrv_nonlinear_features')
 
 
 

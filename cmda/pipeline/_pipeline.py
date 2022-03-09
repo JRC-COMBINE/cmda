@@ -5,6 +5,7 @@ import concurrent.futures
 from functools import partial
 from tqdm import tqdm
 
+
 from ..feature_extraction.feature_extraction import _extract_features
 from ..preprocessing.filter_object import apply_filters
 
@@ -52,14 +53,23 @@ def _pipeline(path,importer,features,filters):
     keys = list(data.keys())
     rec_name = keys[0]
     fs = data['fs']
-    win = data['window']
-    data = data[rec_name]
+    data_val = data[rec_name]
 
     if filters is not None:
-        data = apply_filters(filter_obj=filters,data=data,fs=fs)
-     
-    res = _extract_features(feature_obj=features,data=data,fs=fs)
+        data_val = apply_filters(filter_obj=filters,data=data_val,fs=fs)
+    
+    if len(data)>3:
+        res = _extract_features(feature_obj=features,data=data_val,fs=fs, win_len=data['win_len'], time_stamps=data['time_stamps'])
+    else:
+        res = _extract_features(feature_obj=features,data=data_val,fs=fs)
+    
+    
     if iswin:
-        rec_name = f"{rec_name}__{win}"
+        index = data['window']
+        res = {'ID':rec_name, **res}
+    else:
+        index = rec_name
 
-    return rec_name,res
+    return index,res
+
+

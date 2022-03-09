@@ -5,53 +5,87 @@ from inspect import getfullargspec
 
 from ._add_filters import _AddFilters
 from . import filter_functions as ff
+from . import hrv_preprocessing as hrvp
 
+class UDF():
+    pass
 
 class Filters:
 
-    _udf_list = {}
+    udf = UDF()
+    __udf_list = {}
 
     _ff_list = [
         'butter_filter',
         'rm_outlier_quantile'
     ]
 
+    _hrv_list = [
+        'rr_rm_outlier',
+        'rr_rm_ectopic',
+        'rr_scaler',
+        'rr_interpolate'
+    ]
+
+
     def __init__(self):
         self.add = _AddFilters()
+        self._udf_list = {}
+        self.clean()
 
     @classmethod
-    def add_udf(cls, func):
+    def clean(cls):
+        cls.__udf_list = {}
+
+    @classmethod
+    def _add_udf(cls, func):
         func_name = func.__name__+"__0"
 
-        while func_name in cls._udf_list:
+        while func_name in cls.__udf_list:
             func_name_splited = func_name.split('__')
             new_func_name = int(func_name_splited[1])+1
             func_name = f'{func.__name__}__{str(new_func_name)}'
 
-        setattr(cls, func_name, decorator_fun(func))
-        cls._udf_list = {**cls._udf_list, **{func_name: {}}}
+        setattr(cls.udf, func_name, decorator_fun(func))
+        # cls.__udf_list = {**cls.__udf_list, **{func_name: {}}}
+        return {func_name:{}}
+
+
+    def add_udf(self,func):
+        self._udf_list = {**self._udf_list, **self._add_udf(func=func)}
 
 
     def transform(self,x,fs):
         res_all = {}
 
-        self._features = {**self.add._ListOfFunctions, **self._udf_list}
-        for func_key in self._features:
-            args = self._features[func_key]
+        self._filters = {**self.add._ListOfFunctions, **self._udf_list}
+        for func_key in self.add._ListOfFunctions:
+            args = self.add._ListOfFunctions[func_key]
             func = func_key.split('__')
             counter = func[1]
             func = func[0]
             if func in self._ff_list:
                 method_to_call = getattr(ff, func)
                 x = method_to_call(x=x, fs=fs,**args)
+            elif func in self._hrv_list:
+                method_to_call = getattr(hrvp, func)
+                x = method_to_call(x=x,**args)
             elif func_key in self._udf_list:
                 # func_name = "_Features" + func
                 method_to_call = getattr(self, func_key)
                 x = method_to_call(x=x)
-            
+
+        for func_key in self._udf_list:
+            args = self._udf_list[func_key].copy()
+            func = func_key.split('__')
+            func = func[0]
+            if func_key in self._udf_list:
+                # func_name = "_Features" + func
+                method_to_call = getattr(self.udf, func_key)
+                x = method_to_call(self,x=x)
+
+
         return x
-
-
 
 
 def apply_filters(filter_obj, data: dict, fs: int = 1) -> dict:
@@ -66,22 +100,25 @@ def apply_filters(filter_obj, data: dict, fs: int = 1) -> dict:
     Returns:
         dict: Filtered data.
     """
-    if isinstance(filter_obj,dict):
-        filters_keys = set(filter_obj.keys())
-        data_keys = set(data.keys())
-        if len(data_keys.difference(filters_keys)) != 0:
-            raise ValueError('The feature object keys are not as same as the data keys')
+    # if isinstance(filter_obj,dict):
+    #     filters_keys = set(filter_obj.keys())
+    #     data_keys = set(data.keys())
+    #     if len(data_keys.difference(filters_keys)) != 0:
+    #         raise ValueError('The feature object keys are not as same as the data keys')
 
     res = {}
     for key, x in data.items():
         
         if isinstance(filter_obj,dict):
-            obj = filter_obj[key]
+            filters_keys = filter_obj.keys()
+            if key in filters_keys:
+                obj = filter_obj[key]
+                data[key] = obj.transform(x = x, fs = fs)
+            else:
+                data[key] = x
         else:
             obj = filter_obj
-
-        
-        data[key] = obj.transform(x = x, fs = fs)
+            data[key] = obj.transform(x = x, fs = fs)
 
     return data
 

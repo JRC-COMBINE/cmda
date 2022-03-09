@@ -136,10 +136,11 @@ def peaks(f,pxx,n_peaks =1, height = True, width = True):
 
 def band_power(f,pxx,low = None ,high = None, normalize = True, log = False, _dict_out=True):
     try:
-        _,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
-        res= np.sum(band)
+        f_band,band = _band_func(f=f, pxx=pxx, low=low, high=high, log = log)
+        df = f_band[1]-f_band[0]
+        res= np.sum(band) * df
         if normalize:
-            res = res/np.sum(pxx)
+            res = res/(np.sum(pxx)*df)
     except:
         res = np.nan
 
@@ -204,8 +205,8 @@ def band_agg(f,pxx,low = None ,high = None, log = False):
     peak = f_band[argmax]
     entropy = spectral_entropy(f=f_band,pxx=band,_dict_out=False)
     try:
-        power = np.sum(band)
-        power = power/np.sum(pxx)
+        power = np.sum(band) * (f_band[1]-f_band[0])
+        power = power/(np.sum(pxx) * (f[1]-f[0]))
     except:
         power = np.nan
 

@@ -12,6 +12,8 @@ from scipy import signal, integrate, stats
 from math import floor, factorial
 from scipy.interpolate import interp1d
 
+from ..utils.utils import _embed
+
 
 def _nanfunction(x, func, nanfunc, nan_omit=False, min_samples=1):
     """
@@ -300,7 +302,7 @@ def entropy(x, normalize = True):
     return res
 
 
-def perm_entropy(x,m,tau):
+def perm_entropy(x,m,tau,_dict_out= True):
     x = np.array(x)
  
     hashmult = np.power(m, range(m))
@@ -314,32 +316,36 @@ def perm_entropy(x,m,tau):
     res = stats.entropy(c, base=2)
     res /= np.log2(factorial(m))
 
-    res = {f'perm_entropy_m{m}_t{tau}':res}
+    if _dict_out:
+        res = {f'perm_entropy_m{m}_t{tau}':res}
 
     return res
 
 
 def sample_entropy(x, m, tau,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
 
-    n = len(x)
+    try:
+        n = len(x)
 
-    if down_ratio:
-        x = x.copy()
-        x = _downsample(x,int(down_ratio*n))
+        if down_ratio:
+            x = x.copy()
+            x = _downsample(x,int(down_ratio*n))
 
-    r = std_ratio*np.std(x)
-    # Split time series and save all templates of length m
+        r = std_ratio*np.std(x)
+        # Split time series and save all templates of length m
 
-    x_m = _embed(x,order=m,delay=tau)
+        x_m = _embed(x,order=m,delay=tau)
 
-    # Save all matches minus the self-match, compute B
-    b = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
-    # Similar for computing A
-    x_m = _embed(x,order=m+1,delay=tau)
-    a = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
-    # Return SampEn
+        # Save all matches minus the self-match, compute B
+        b = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
+        # Similar for computing A
+        x_m = _embed(x,order=m+1,delay=tau)
+        a = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
+        # Return SampEn
 
-    res = -np.log(a / b)
+        res = -np.log(a / b)
+    except:
+        res = np.nan
 
     if _dict_out:
         res = {'sample_entropy':res}
@@ -405,35 +411,17 @@ def _check_ndarray(x):
         return x
     return np.array(x)
 
-def _embed(x, order=3, delay=1):
-    """Time-delay embedding.
-    Parameters
-    ----------
-    x : 1d-array
-        Time series, of shape (n_times)
-    order : int
-        Embedding dimension (order).
-    delay : int
-        Delay.
-    Returns
-    -------
-    embedded : ndarray
-        Embedded time-series, of shape (n_times - (order - 1) * delay, order)
-    """
-    N = len(x)
-    if order * delay > N:
-        raise ValueError("Error: order * delay should be lower than x.size")
-    if delay < 1:
-        raise ValueError("Delay has to be at least 1.")
-    if order < 2:
-        raise ValueError("Order has to be at least 2.")
-    Y = np.zeros((order, N - (order - 1) * delay))
-    for i in range(order):
-        Y[i] = x[i * delay:i * delay + Y.shape[1]]
-    return Y.T
 
 
 def _downsample(array, npts):
     interpolated = interp1d(np.arange(len(array)), array, axis = 0, fill_value = 'extrapolate')
     downsampled = interpolated(np.linspace(0, len(array), npts))
     return downsampled
+
+
+if __name__ == "__main__":
+    x = (12,10,8,14,9,8,6)
+    print(perm_entropy(x,3,1))
+
+    y = (2/5*(np.log2(1/5)))+(3/5*np.log2(3/5))
+    print(-y/np.log2(6))

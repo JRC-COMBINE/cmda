@@ -5,7 +5,7 @@ import pandas as pd
 
 
 
-def _extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
+def _extract_features(feature_obj, data: dict, fs: int = 1, **kwargs) -> dict:
     """
     Extarct features from a dictionary containing multiple arrays.
 
@@ -32,7 +32,7 @@ def _extract_features(feature_obj, data: dict, fs: int = 1) -> dict:
             obj = feature_obj
 
         
-        res_key = obj.transform(x = x, fs = fs)
+        res_key = obj.transform(x = x, fs = fs, **kwargs)
         res_key = {f'{key}_{k}': v for k, v in res_key.items()}
         res = {**res,**res_key}
 
