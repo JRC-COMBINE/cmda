@@ -25,7 +25,7 @@ def _extract_features(feature_obj, data: dict, fs: int = 1, **kwargs) -> dict:
 
     res = {}
     for key, x in data.items():
-        
+
         if isinstance(feature_obj,dict):
             obj = feature_obj[key]
         else:

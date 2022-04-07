@@ -8,12 +8,13 @@ req_packs = [
     'scipy',
     'sklearn',
     'wfdb',
-    'PyWavelets'
+    'PyWavelets',
+    'pathos'
 ]
 
 
 setup(name='CMDA',
-      version='0.0.11',
+      version='0.0.12',
       description='Continuous Monitoring Data Analysis',
       author='Pejman Farhadi Ghalati',
       author_email='farhadi@combine.rwth-aachen.de',

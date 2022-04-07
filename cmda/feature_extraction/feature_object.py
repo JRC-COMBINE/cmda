@@ -5,6 +5,7 @@ from scipy import signal
 from inspect import getfullargspec
 
 from ._add_functions import _AddFeatures
+from ..utils.utils import _AddUDF
 from . import time_domain_features as td
 from . import spectral_features as fd
 from . import wavelet_features as wf
@@ -15,9 +16,6 @@ class UDF():
 
 
 class Features:
-
-    udf = UDF()
-    __udf_list = {}
 
     _td_list = [
         'mean',
@@ -68,7 +66,7 @@ class Features:
         'hrv_spectral_features',
     ]
 
-    def __init__(self):
+    def __init__(self,udf_source=None):
         '''
         Create a Feature object for extracting features from an array.
         Built-in features can be added by the "add" function.
@@ -86,30 +84,32 @@ class Features:
 
         '''        
         self.add = _AddFeatures()
-        self._udf_list = {}
-        self.clean()
+        self.udf = _AddUDF()
+        self.udf_source = udf_source
+        # self._udf_list = {}
+        # self.clean()
 
 
-    @classmethod
-    def clean(cls):
-        cls.__udf_list = {}
+    # @classmethod
+    # def clean(cls):
+    #     cls._udf_list = {}
 
-    @classmethod
-    def _add_udf(cls, func):
-        func_name = func.__name__+"__0"
+    # @classmethod
+    # def _add_udf(cls, func):
+    #     func_name = func.__name__+"__0"
 
-        while func_name in cls.__udf_list:
-            func_name_splited = func_name.split('__')
-            new_func_name = int(func_name_splited[1])+1
-            func_name = f'{func.__name__}__{str(new_func_name)}'
+    #     while func_name in cls._udf_list:
+    #         func_name_splited = func_name.split('__')
+    #         new_func_name = int(func_name_splited[1])+1
+    #         func_name = f'{func.__name__}__{str(new_func_name)}'
 
-        setattr(cls.udf, func_name, decorator_fun(func))
-        # cls.__udf_list = {**cls.__udf_list, **{func_name: {}}}
-        return {func_name:{}}
+    #     setattr(cls, func_name, decorator_fun(func))
+    #     # cls.__udf_list = {**cls.__udf_list, **{func_name: {}}}
+    #     return {func_name:{}}
 
 
-    def add_udf(self,func):
-        self._udf_list = {**self._udf_list, **self._add_udf(func=func)}
+    # def add_udf(self,func):
+    #     self._udf_list = {**self._udf_list, **self._add_udf(func=func)}
 
 
     def transform(self,x,fs, **kwargs):
@@ -168,14 +168,12 @@ class Features:
             
             res_all = {**res_all, **res}
 
-        for func_key in self._udf_list:
-            args = self._udf_list[func_key].copy()
-            func = func_key.split('__')
-            func = func[0]
-            if func_key in self._udf_list:
-                # func_name = "_Features" + func
-                method_to_call = getattr(self.udf, func_key)
-                res = method_to_call(self,x=x)
+        for func_key in self.udf._ListOfUDFs:
+            args = self.udf._ListOfUDFs[func_key].copy()
+            # func = func_key.split('__')
+            # func = func[0]
+            method_to_call = getattr(self.udf, func_key)
+            res = method_to_call(x=x)
 
             res_all = {**res_all, **res}
 
@@ -204,24 +202,10 @@ class Features:
 
 
     def __str__(self):
-        list_of_features = {**self.add._ListOfFunctions, **self._udf_list}
+        list_of_features = {**self.add._ListOfFunctions, **self.udf._ListOfUDFs}
         return f"{list_of_features}"
 
     
-
-
-def decorator_fun(func):
-    # if not isinstance(labels, (list, tuple)):
-    #     labels = [labels]
-
-    def wrapper_fun(self,x):
-        res = func(x)
-        # if not isinstance(res, (list, tuple)):
-        #     res = [res]
-        # res = dict(zip(labels, res))
-        return res
-
-    return wrapper_fun
 
 
 def _check_duplicated_key_names(res, res_all):
@@ -242,48 +226,6 @@ def _check_duplicated_key_names(res, res_all):
 
 
 
-class _Addudf:
 
-    _udf_list = {}
 
-    def __init__(self):
-        self.clean()
 
-    @classmethod
-    def clean(cls):
-        cls._udf_list = {}
-
-    @classmethod
-    def add(cls, func):
-        func_name = func.__name__+"__0"
-
-        while func_name in cls._udf_list:
-            func_name_splited = func_name.split('__')
-            new_func_name = int(func_name_splited[1])+1
-            func_name = f'{func.__name__}__{str(new_func_name)}'
-
-        setattr(cls, func_name, decorator_fun(func))
-        cls._udf_list = {**cls._udf_list, **{func_name: {}}}
-
-class _Addudf:
-
-    _udf_list = {}
-
-    def __init__(self):
-        self.clean()
-
-    @classmethod
-    def clean(cls):
-        cls._udf_list = {}
-
-    @classmethod
-    def add(cls, func):
-        func_name = func.__name__+"__0"
-
-        while func_name in cls._udf_list:
-            func_name_splited = func_name.split('__')
-            new_func_name = int(func_name_splited[1])+1
-            func_name = f'{func.__name__}__{str(new_func_name)}'
-
-        setattr(cls, func_name, decorator_fun(func))
-        cls._udf_list = {**cls._udf_list, **{func_name: {}}}

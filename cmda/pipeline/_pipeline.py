@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-import concurrent.futures
 from functools import partial
 from tqdm import tqdm
+from pathos.multiprocessing import ProcessingPool as Pool
 
 
 from ..feature_extraction.feature_extraction import _extract_features
@@ -32,8 +32,9 @@ class Pipeline:
             iterator_progress = tqdm(iterator)
             res = map(pip_func, iterator_progress)
         else:
-            executer = concurrent.futures.ProcessPoolExecutor(max_workers= n_jobs)
-            res = tqdm(executer.map(pip_func, iterator), total=len(iterator))
+            p = Pool()
+            res = tqdm(p.map(pip_func, iterator),total=len(iterator))
+
 
         res = {i[0]:i[1] for i in res if i is not None}
 

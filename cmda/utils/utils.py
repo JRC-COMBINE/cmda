@@ -65,3 +65,50 @@ def _remove_duplicated_timestamps(x,t):
         t = np.delete(t,idx)
     
     return x,t
+
+
+
+class _AddUDF:
+
+    # _udf_list = {}
+
+    def __init__(self):
+        self._ListOfUDFs = {}
+
+    def _add2list(self,func_name):
+        func_name_ = func_name+"__0"
+
+        while func_name_ in self._ListOfUDFs:
+            func_name_splited = func_name_.split('__')
+            new_func_name = int(func_name_splited[1])+1
+            func_name_ = f'{func_name}__{str(new_func_name)}'
+
+        self._ListOfUDFs[func_name_] = {}
+        return func_name_
+
+    @classmethod
+    def clean(cls):
+        cls._udf_list = {}
+
+    @classmethod
+    def _add(cls,func,func_name):
+        setattr(cls, func_name, decorator_fun(func))
+
+    def add(self,func):
+        func_name = func.__name__
+        n_func_name = self._add2list(func_name=func_name)
+        self._add(func=func, func_name=n_func_name)
+
+
+def decorator_fun(func):
+    # if not isinstance(labels, (list, tuple)):
+    #     labels = [labels]
+
+    def wrapper_fun(self,x):
+        res = func(x)
+        # if not isinstance(res, (list, tuple)):
+        #     res = [res]
+        # res = dict(zip(labels, res))
+        return res
+
+    return wrapper_fun

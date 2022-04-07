@@ -138,7 +138,7 @@ class RollingWindowCSV:
             len_data = set(range(1, iterator[2]+1))
             skip_rows = len_data.difference(bin_win)
             if self.time_index_col:
-                usecols = self.channels
+                usecols = self.channels.copy()
                 usecols.append(self.time_index_col)
                 res = pd.read_csv(path, skiprows=skip_rows, usecols=usecols, **self.kwargs)
                 time_idx = pd.to_datetime(res[self.time_index_col], format=self.datetime_format)
