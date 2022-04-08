@@ -206,7 +206,7 @@ class RollingWindowCSV:
         for file in itr:
             if self.time_index_col:
                 time_idx = pd.read_csv(file,usecols=[self.time_index_col], **self.kwargs)
-                time_idx = pd.to_datetime(time_idx['ChartTime'], format=self.datetime_format)
+                time_idx = pd.to_datetime(time_idx[self.time_index_col], format=self.datetime_format)
                 n_lines = len(time_idx)
                 t_l = time_idx.iloc[0]
                 bins = []

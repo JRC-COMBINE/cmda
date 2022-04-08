@@ -303,18 +303,21 @@ def entropy(x, normalize = True):
 
 
 def perm_entropy(x,m,tau,_dict_out= True):
-    x = np.array(x)
- 
-    hashmult = np.power(m, range(m))
+    try:
+        x = np.array(x)
+    
+        hashmult = np.power(m, range(m))
 
-    sorted_idx = _embed(x, order=m, delay=tau).argsort(kind='quicksort')
+        sorted_idx = _embed(x, order=m, delay=tau).argsort(kind='quicksort')
 
-    hashval = (np.multiply(sorted_idx, hashmult)).sum(1)
+        hashval = (np.multiply(sorted_idx, hashmult)).sum(1)
 
-    _, c = np.unique(hashval, return_counts=True)
+        _, c = np.unique(hashval, return_counts=True)
 
-    res = stats.entropy(c, base=2)
-    res /= np.log2(factorial(m))
+        res = stats.entropy(c, base=2)
+        res /= np.log2(factorial(m))
+    except:
+        res = np.nan
 
     if _dict_out:
         res = {f'perm_entropy_m{m}_t{tau}':res}
@@ -344,6 +347,7 @@ def sample_entropy(x, m, tau,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
         # Return SampEn
 
         res = -np.log(a / b)
+
     except:
         res = np.nan
 
