@@ -1,22 +1,21 @@
 # Import Data
 
-```cmda.import_data``` library has handful modules to import continuous data from local disk or Physionet databases.
+```cmda.import_data``` library provides the modules to import multiple time-series data files from local disk.
 
 The availabe modules are as follows:
 
-## ImportWFDB
-```cmda.import_data.ImportWFDB``` is a module, which utilizes [*wfdb*](https://wfdb.readthedocs.io/en/latest/index.html) package to import [**WFDB Physionet**](https://physionet.org/about/database/) databases. An example of using this module is shown [here].
-
-## RollingWindowWFDB
-```cmda.import_data.RollingWindowWFDB``` is a module similar to ```cmda.import_data.ImportWFDB``` for reading [**WFDB Physionet**](https://physionet.org/about/database/) databases and segementing the data sequence in a rolling window manner. A tutorial of using this module can be found [here].
-
 ## ImportCSV
-```cmda.import_data.ImportCSV``` is a module to read *CSV* files. An example of using this module can be found [here].
+[```cmda.import_data.ReadCSV```](../api/read_data/readCSV.md) is a module to read multiple *csv* files. An example of using this module can be found [here](../examples/pipeline.ipynb).
+
 !!! note
-    the csv files must constain signals as columns and temporal instances as rows.
+    The csv files must constain signals as columns and temporal instances as rows.
 
 ## RollingWindowCSV
-```cmda.import_data.ImportCSV``` is a module similar to ```cmda.import_data.RollingWindowCSV``` for importing *CSV* files and segementing the data sequence in a rolling window manner. A tutorial of using this module can be found [here].
+[```cmda.import_data.RollingWindowCSV```](../api/read_data/rollingCSV.md) is a module similar to [```cmda.import_data.ReadCSV```](../api/read_data/readCSV.md) for importing *csv* files and segementing the data sequence in a rolling window manner. The segmentation process allows the [pipeline](../user_guide/pipeline) module to distribute each segment on multiple CPU cores in case of parallel feature extraction, which reduces the computation time significantly.
+
 !!! note
-    the csv files must constain signals as columns and temporal instances as rows.
+    The csv files must constain signals as columns and temporal instances as rows.
+
+!!! note
+    In case of uneven data sampling, a DateTime column is required for the segmentation step.
 

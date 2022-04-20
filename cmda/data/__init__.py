@@ -30,7 +30,7 @@ def get_csv_samples(path):
     
     print('Downloading the sample CSV files ...')
     for rec,pb in zip(record_names,public_dir):
-        record = rdrecord(record_name=rec, pb_dir=pb, channel_names=['II','V1','AVF'])
+        record = rdrecord(record_name=rec, pn_dir=pb, channel_names=['II','V1','AVF'])
         data = record.p_signal
         data = pd.DataFrame(data)
         data.columns = ['II','V1','AVF']

@@ -84,7 +84,6 @@ def hrv_spectral_features(x, fs, win_len, time_stamps, method="cubic"):
     nn = np.asfarray(nn)
 
     if np.isfinite(nn).all():
-
         nn_interpol = interpolate(nn,fs=fs, win_len = win_len, time_stamps=time_stamps, method = method, scale=1000)
         # f,pxx = welch(nn_interpol,fs=fs,window='hamming',nfft=2048, nperseg=512,noverlap=128)
         f,pxx = periodogram(nn,fs=fs, detrend='constant', window='hamming',nfft=2048)

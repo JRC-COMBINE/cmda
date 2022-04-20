@@ -281,7 +281,7 @@ def zcr(x, center=True, nan_omit=False, min_samples=1):
     # center the x
     x = _check_ndarray(x)
     if center:
-        x -= _nanfunction(
+        x = x - _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean
     )
 
@@ -303,6 +303,7 @@ def entropy(x, normalize = True):
 
 
 def perm_entropy(x,m,tau,_dict_out= True):
+    x = _check_ndarray(x)
     try:
         x = np.array(x)
     
@@ -325,8 +326,9 @@ def perm_entropy(x,m,tau,_dict_out= True):
     return res
 
 
-def sample_entropy(x, m, tau,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
+def sample_entropy(x, m ,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
 
+    x = _check_ndarray(x)
     try:
         n = len(x)
 
@@ -337,7 +339,7 @@ def sample_entropy(x, m, tau,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
         r = std_ratio*np.std(x)
         # Split time series and save all templates of length m
 
-        x_m = _embed(x,order=m,delay=tau)
+        x_m = _embed(x,order=m,delay=1)
 
         # Save all matches minus the self-match, compute B
         b = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
@@ -352,7 +354,7 @@ def sample_entropy(x, m, tau,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
         res = np.nan
 
     if _dict_out:
-        res = {'sample_entropy':res}
+        res = {f'sample_entropy_m{m}':res}
     return res
 
 

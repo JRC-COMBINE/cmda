@@ -45,3 +45,6 @@ class _AddFilters:
         args = _get_args(locals())
         self._add2list(args = args, func_name='rr_scaler')
 
+    def butter_filter(self,cutoff, order = 4, btype = 'lowpass'):
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='butter_filter')

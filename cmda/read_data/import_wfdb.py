@@ -11,7 +11,7 @@ import wfdb
 
 class ReadWFDB:
 
-    def __init__(self, record_names, public_dir=None, channels=None):
+    def __init__(self, record_names, pn_dir=None, channels=None):
         '''
         Read multiple records of a WFDB [(Physionet waveform database)].
 
@@ -28,7 +28,7 @@ class ReadWFDB:
         '''   
         self.channels = channels
         self.iswin = False
-        self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
+        self.iterator = self._iterator(rec_path_list=record_names, pn_dir=pn_dir) 
 
     def load(self,n_jobs=None):
         '''
@@ -52,25 +52,25 @@ class ReadWFDB:
 
         return list(res)
     
-    def _iterator(self,rec_path_list,pb_dir):
+    def _iterator(self,rec_path_list,pn_dir):
         # if rec_path_list is None:
         #     if pb_dir is None:
         #         raise ValueError("When recored_names is None, a public_dir must be set")
         #     else:
         #         rec_path_list = wfdb.io.get_record_list(db_dir=pb_dir)
-        if not isinstance(pb_dir,list):
-            iterator = tuple(map(lambda x: (x, pb_dir), rec_path_list))
+        if not isinstance(pn_dir,list):
+            iterator = tuple(map(lambda x: (x, pn_dir), rec_path_list))
         else:
-            iterator = list(zip(rec_path_list,pb_dir))
+            iterator = list(zip(rec_path_list,pn_dir))
 
         return iterator
 
     def _get_data(self,iterator,sampfrom=0,sampto=None):
         rec_path = iterator[0]
-        pb_dir = iterator[1]
+        pn_dir = iterator[1]
         res = _read_wfdb(
             record_path= rec_path,
-            pb_dir = pb_dir,
+            pn_dir = pn_dir,
             channel_names= self.channels,
             sampfrom = sampfrom,
             sampto=sampto
@@ -104,7 +104,7 @@ class RollingWindowWFDB:
         self.win_len = win_len
         self.step = step
         self.iswin = True
-        self.iterator = self._iterator(rec_path_list=record_names, pb_dir=public_dir) 
+        self.iterator = self._iterator(rec_path_list=record_names, pn_dir=public_dir) 
 
     def load(self,n_jobs=None):
         '''
@@ -127,17 +127,17 @@ class RollingWindowWFDB:
 
         return list(res)
     
-    def _iterator(self,rec_path_list,pb_dir):
-        if not isinstance(pb_dir,list):
-            itr = list(map(lambda x: (x, pb_dir), rec_path_list))
+    def _iterator(self,rec_path_list,pn_dir):
+        if not isinstance(pn_dir,list):
+            itr = list(map(lambda x: (x, pn_dir), rec_path_list))
         else:
-            itr = list(zip(rec_path_list,pb_dir))
+            itr = list(zip(rec_path_list,pn_dir))
 
         iterator = []
         print("Initializing the segmentation ...")
         for rec_path,pb in itr:
             record_name, sig_len, sig_name, fs = _get_rec_info(
-                record_path=rec_path, pb_dir=pb
+                record_path=rec_path, pn_dir=pb
             )
 
             bins = get_bins(n = sig_len, win_len = self.win_len, step = self.step, fs = fs)
@@ -149,13 +149,13 @@ class RollingWindowWFDB:
 
 
     def _get_data(self,iterator):
-        rec_path,pb_dir,samples = iterator
+        rec_path,pn_dir,samples = iterator
         sampfrom = samples[0]
         sampto = samples[-1]
 
         res = _read_wfdb(
             record_path= rec_path,
-            pb_dir = pb_dir,
+            pn_dir = pn_dir,
             channel_names= self.channels,
             sampfrom = sampfrom,
             sampto=sampto
@@ -184,29 +184,29 @@ def _get_rec_path(rec_name: str, rec_path: str, source: Optional[str] = None) ->
 
     Returns:
         record_path (str): wfdb.rdrecord record_name input
-        pb_dir (str): wfdb.rdrecord pb_dir input
+        pn_dir (str): wfdb.rdrecord pn_dir input
     """
     if not isinstance(source, (str, None)):
         raise TypeError("Source must be either str or None")
 
     if source is None:
         record_path = rec_name
-        pb_dir = rec_path
+        pn_dir = rec_path
     else:
         record_path = os.path.join(source, rec_path, rec_name)
-        pb_dir = None
+        pn_dir = None
 
-    return rec_path, pb_dir
+    return rec_path, pn_dir
 
 
-def _get_rec_info(record_path: str, pb_dir: str) -> tuple:
+def _get_rec_info(record_path: str, pn_dir: str) -> tuple:
     """
     Get the record name, sampling frequency of the signals,
     signals length and available signal channels.
 
     Args:
         record_path (str): wfdb.rdrecord record_name input
-        pb_dir (str): wfdb.rdrecord pb_dir input
+        pn_dir (str): wfdb.rdrecord pn_dir input
 
     Returns:
         sig_len (int): Signals' ndarray length
@@ -215,7 +215,7 @@ def _get_rec_info(record_path: str, pb_dir: str) -> tuple:
     """
 
     # get the header of wfdb record
-    rec_info = wfdb.rdheader(record_name=record_path, pb_dir=pb_dir)
+    rec_info = wfdb.rdheader(record_name=record_path, pn_dir=pn_dir)
 
     record_name = rec_info.record_name
     sig_len = rec_info.sig_len
@@ -227,7 +227,7 @@ def _get_rec_info(record_path: str, pb_dir: str) -> tuple:
 
 def _read_wfdb(
     record_path: str,
-    pb_dir: Optional[str] = None,
+    pn_dir: Optional[str] = None,
     channel_names: Optional[list] = None,
     sampfrom: int = 0,
     sampto: Optional[int] = None,
@@ -235,7 +235,7 @@ def _read_wfdb(
 
     # get the wfdb record information
     record_name, sig_len, sig_name, fs = _get_rec_info(
-        record_path=record_path, pb_dir=pb_dir
+        record_path=record_path, pn_dir=pn_dir
     )
 
     # TODO check the channel names
@@ -245,7 +245,7 @@ def _read_wfdb(
 
     record = wfdb.rdrecord(
         record_name=record_path,
-        pb_dir=pb_dir,
+        pn_dir=pn_dir,
         sampfrom=sampfrom,
         sampto=sampto,
         channel_names=channel_names,
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     record_path = (
         "/Users/pejman/Desktop/CPMA_Project/ptb/data/ptb-xl/records500/05000/05460_hr"
     )
-    pb_dir = None
+    pn_dir = None
 
-    data = _read_wfdb(record_path=record_path, pb_dir=None)
+    data = _read_wfdb(record_path=record_path, pn_dir=None)
     print(data.keys())

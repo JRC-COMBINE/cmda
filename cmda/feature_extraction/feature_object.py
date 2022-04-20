@@ -6,13 +6,11 @@ from inspect import getfullargspec
 
 from ._add_functions import _AddFeatures
 from ..utils.utils import _AddUDF
+from ..utils.checks import _check_duplicated_key_names
 from . import time_domain_features as td
 from . import spectral_features as fd
 from . import wavelet_features as wf
 from . import hrv
-
-class UDF():
-    pass
 
 
 class Features:
@@ -82,74 +80,64 @@ class Features:
             >>> feature_obj.add.std()
             >>> res = feature_obj.transform(x=x,fs=1)
 
-        '''        
+        '''
+        # _AddFeatures for calling the built-in functions        
         self.add = _AddFeatures()
+
+        # _AddUDF  for adding the user-defined functions
         self.udf = _AddUDF()
-        self.udf_source = udf_source
-        # self._udf_list = {}
-        # self.clean()
 
 
-    # @classmethod
-    # def clean(cls):
-    #     cls._udf_list = {}
-
-    # @classmethod
-    # def _add_udf(cls, func):
-    #     func_name = func.__name__+"__0"
-
-    #     while func_name in cls._udf_list:
-    #         func_name_splited = func_name.split('__')
-    #         new_func_name = int(func_name_splited[1])+1
-    #         func_name = f'{func.__name__}__{str(new_func_name)}'
-
-    #     setattr(cls, func_name, decorator_fun(func))
-    #     # cls.__udf_list = {**cls.__udf_list, **{func_name: {}}}
-    #     return {func_name:{}}
-
-
-    # def add_udf(self,func):
-    #     self._udf_list = {**self._udf_list, **self._add_udf(func=func)}
-
-
-    def transform(self,x,fs, **kwargs):
-        '''[summary]
+    def transform(self,x,fs=1, **kwargs):
+        '''
+        apply the added feature functions to the array `x`
 
         Args:
-            x ([type]): [description]
-            fs ([type]): [description]
+            x (array-like): Input array
+            fs (float,optional): Sampling frequency of `x`. Defaults to 1.
 
         Returns:
-            [type]: [description]
-        '''        
+            dict: extracted features from `x`
+        '''
+
+        # create a buffer for the periodogram and welch spectrum    
         self.ps = None
         self.freq = None
         self.welch = None
         self.freq_welch = None
+
+        # pre-define the final result as a dict 
         res_all = {}
 
-        # self._feature_list = self.add._ListOfFunctions
-
-        # self._features = {**self.add._ListOfFunctions, **self._udf_list}
+        # run a for loop on the added built-in features
         for func_key in self.add._ListOfFunctions:
+
+            # get the args of the built-in funtion
             args = self.add._ListOfFunctions[func_key].copy()
             func = func_key.split('__')
             func = func[0]
+
+            # check whether the function name is in the time-domain features
             if func in self._td_list:
                 method_to_call = getattr(td, func)
                 res = method_to_call(x=x,**args)
+            # check whether the function name is a power spectrum function
             elif func in self._ps_list:
                 method_to_call = getattr(td, func)
                 res = method_to_call(x=x,fs=fs,**args)
+            # check whether the function name is in hrv time domain and non-linear features
             elif func in self._hrv_list:
                 method_to_call = getattr(hrv, func)
                 res = method_to_call(x=x,**args)
+            # check whether the function name is hrv frequency-domain features
             elif func in self._hrvf_list:
                 method_to_call = getattr(hrv, func)
                 res = method_to_call(x=x,**args,**kwargs)
+            # check whether the function name is a wavelet features
             elif func in self._wf_list:
                 method_to_call = getattr(wf, func)
                 res = method_to_call(x=x,fs=fs,**args)
+            # check whether the function name is a frequency-domain feature
             elif func in self._fd_list:
                 method_to_call = getattr(fd, func)
                 spectrum = args['spectrum']
@@ -157,15 +145,12 @@ class Features:
                 args_list = getfullargspec(method_to_call)[0]
                 kwargs = {key: args[key] for key in args.keys() if key not in args_list}
                 method_args = {key: args[key] for key in args.keys() if key in args_list}
+
+                # check whether the power spectrum exists in the buffer
                 f,pxx = self._check_spectrum(x=x,fs=fs,spectrum=spectrum,**kwargs)
                 res = method_to_call(f = f, pxx = pxx, **method_args)
-            # elif func_key in self._udf_list:
-            #     # func_name = "_Features" + func
-            #     method_to_call = getattr(self.add_udf, func_key)
-            #     res = method_to_call(x=x)
             
-            # res = _check_duplicated_key_names(res=res,res_all=res_all)
-            
+            # handle duplicated function names
             res_all = {**res_all, **res}
 
         for func_key in self.udf._ListOfUDFs:
@@ -175,8 +160,10 @@ class Features:
             method_to_call = getattr(self.udf, func_key)
             res = method_to_call(x=x)
 
+            # handle duplicated function names
             res_all = {**res_all, **res}
 
+    
         return res_all
 
 
@@ -206,23 +193,6 @@ class Features:
         return f"{list_of_features}"
 
     
-
-
-def _check_duplicated_key_names(res, res_all):
-
-    for k in res.keys():
-        key_updated = k
-        while key_updated in res_all:
-            key_splited = key_updated.split('__')
-            try:
-                key_updated = int(key_splited[1])+1
-                key_updated = f'{k}__{str(key_updated)}'
-            except:
-                key_updated = f"{k}__2"
-
-        res[key_updated] = res.pop(k)
-
-    return res
 
 
 

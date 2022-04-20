@@ -112,3 +112,15 @@ def decorator_fun(func):
         return res
 
     return wrapper_fun
+
+
+def get_bins(n, win_len, step=None, fs=1):
+
+    if step is None:
+        step = win_len
+
+    win_len = int(win_len * fs)
+    step = int(step * fs)
+    n_bins = int(np.floor((n - win_len) / step) + 1)
+    bins = [(i * step,(i * step) + win_len,range((i * step), (i * step) + win_len)) for i in range(0, n_bins)]
+    return bins

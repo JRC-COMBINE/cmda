@@ -3,6 +3,15 @@ import numpy as np
 from scipy import signal, integrate, stats
 import time
 
+def energy(f,pxx,_dict_out=True):
+    try:
+        res = np.sum(pxx)
+    except:
+        res = np.nan
+
+    if _dict_out:
+        res = {'energy':res}
+    return res
 
 def mnf(f,pxx, _dict_out = True):
     '''
@@ -212,7 +221,7 @@ def band_agg(f,pxx,low = None ,high = None, log = False):
 
     res = {
         f'power_[{low},{high}]Hz':power,
-        # f'mnf_[{low},{high}]Hz':mnf_res,
+        f'mnf_[{low},{high}]Hz':mnf_res,
         f'vcf_[{low},{high}]Hz':vcf_res,
         f'peak_[{low},{high}]Hz':peak,
         f'entropy_[{low},{high}]Hz':entropy
@@ -238,10 +247,10 @@ def _band_func(f,pxx,low = None ,high = None,log = False):
     return f_band,band
 
 
-def spectral_entropy(f,pxx,normalize=True, _dict_out=True):
+def spectral_entropy(f,pxx,normalized=True, _dict_out=True):
     try:
         res = stats.entropy(pxx, base=2)
-        if normalize:
+        if normalized:
             res /= np.log2(pxx.size)
     except:
         res = np.nan
@@ -261,11 +270,3 @@ def _check_any_nan(x):
         
 
 
-if __name__ == "__main__":
-    x = [1,2,3,4,5,6,7,8,9,10,11,12]
-    y = [4,5,3,6,7,5,8,4,1,19,12,23]
-    freq = np.array(x)
-    pxx = np.array([np.nan,np.nan])
-    
-    res= band_sum(freq,pxx, low=4, high=6, normalize=False)
-    print(res)
