@@ -20,15 +20,14 @@ class ReadWFDB:
 
         Args:
             record_names (list): list of record names or records paths.
-            public_dir ({str} or {list}, optional): in case of importing the data from Physionet server,
+            pn_dir ({str} or {list}, optional): in case of importing the data from Physionet server,
                 public directory of the WFDB or list of public directories.
                 For importing from a local disk, must be set to None. Defaults to None.
             channels (list, optional): list of the channel names (signals) to import. 
                 If None, all the channels are imported. Defaults to None.
         '''   
         self.channels = channels
-        self.iswin = False
-        self.iterator = self._iterator(rec_path_list=record_names, pn_dir=pn_dir) 
+        self.iterators = self._generate_iterators(rec_path_list=record_names, pn_dir=pn_dir) 
 
     def load(self,n_jobs=None):
         '''
@@ -41,29 +40,29 @@ class ReadWFDB:
         Returns:
             dict: imported data as a dictionary, where the keys are the record names.
         '''        
-        iterator = self.iterator
+        iterators = self.iterators
         print("Loading the data ...")
         if n_jobs == 1:
-            iterator_progress = tqdm(iterator)
+            iterator_progress = tqdm(iterators)
             res = map(self._get_data, iterator_progress)
         else:
             executer = concurrent.futures.ProcessPoolExecutor(max_workers= n_jobs)
-            res = tqdm(executer.map(self._get_data, iterator), total=len(iterator))
+            res = tqdm(executer.map(self._get_data, iterators), total=len(iterators))
 
         return list(res)
     
-    def _iterator(self,rec_path_list,pn_dir):
+    def _generate_iterators(self,rec_path_list,pn_dir):
         # if rec_path_list is None:
         #     if pb_dir is None:
         #         raise ValueError("When recored_names is None, a public_dir must be set")
         #     else:
         #         rec_path_list = wfdb.io.get_record_list(db_dir=pb_dir)
         if not isinstance(pn_dir,list):
-            iterator = tuple(map(lambda x: (x, pn_dir), rec_path_list))
+            iterators = tuple(map(lambda x: (x, pn_dir), rec_path_list))
         else:
-            iterator = list(zip(rec_path_list,pn_dir))
+            iterators = list(zip(rec_path_list,pn_dir))
 
-        return iterator
+        return iterators
 
     def _get_data(self,iterator,sampfrom=0,sampto=None):
         rec_path = iterator[0]
@@ -254,8 +253,8 @@ def _read_wfdb(
     data = record.p_signal
     data = dict(zip(channel_names, data.transpose()))
 
-    res = {record_name: data, 'fs':fs, 'window':(sampfrom,sampto)}
-
+    # res = {record_name: data, 'fs':fs, 'window':(sampfrom,sampto)}
+    res = {record_name: data, 'fs':fs}
     return res
 
 
@@ -276,9 +275,9 @@ def get_bins(n, win_len, step = None, fs = 1):
 
 if __name__ == "__main__":
     record_path = (
-        "/Users/pejman/Desktop/CPMA_Project/ptb/data/ptb-xl/records500/05000/05460_hr"
+        "/Users/pejman/Desktop/JRC/applications/ptb-xl/data/ptb-xl/records500/05000/05460_hr"
     )
     pn_dir = None
 
     data = _read_wfdb(record_path=record_path, pn_dir=None)
-    print(data.keys())
+    print(data)

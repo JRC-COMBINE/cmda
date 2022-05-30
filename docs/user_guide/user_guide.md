@@ -12,4 +12,4 @@
    34. [Wavelet features](/wave_features.md)
 ## 4. Pipeline
    41. [Data Pipeline](/pipeline.md)
-## 5. Clustering
+

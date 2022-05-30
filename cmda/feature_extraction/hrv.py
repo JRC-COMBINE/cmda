@@ -21,7 +21,6 @@ def hrv_time_domain_features(x, nan_lim_ratio=0.1):
     nn = x.copy()
     nn = np.asfarray(nn)
     nnd = np.diff(nn)
-    hr = 60000 / nn
 
     num_nan = sum(np.isfinite(nn))
 
@@ -44,35 +43,17 @@ def hrv_time_domain_features(x, nan_lim_ratio=0.1):
         # rmssd
         rmssd = np.sqrt(np.nanmean(nnd ** 2))
 
-
-        # Hr parameters
-        hr_mean = np.nanmean(hr)
-        hr_median = np.nanmedian(hr)
-        hr_max = np.nanmax(hr)
-        hr_min = np.nanmin(hr)
-        hr_p2p = hr_max - hr_min
-
     else:
         sdnn = np.nan
         pnn50 = np.nan
         pnn20 = np.nan
         rmssd = np.nan
-        hr_mean = np.nan
-        hr_median = np.nan
-        hr_max = np.nan
-        hr_min = np.nan
-        hr_p2p = np.nan
 
     res = dict(
         sdnn=sdnn,
         pnn50=pnn50,
         pnn20=pnn20,
-        rmssd=rmssd,
-        hr_mean=hr_mean,
-        hr_median = hr_median,
-        hr_max=hr_max,
-        hr_min=hr_min,
-        hr_p2p=hr_p2p
+        rmssd=rmssd
     )
 
     return res
@@ -152,31 +133,25 @@ def hrv_nonlinear_features(x,nan_limit_ratio=0.1):
 
         sd_ratio = sd2 / sd1
 
-        sampent_2 = sample_entropy(x,m=2,tau=1,_dict_out=False)
-        sampent_3 = sample_entropy(x,m=3,tau=1,_dict_out=False)
+        sampent = sample_entropy(x,m=2,_dict_out=False)
 
-        perment_4 = perm_entropy(x,m=4,tau=1,_dict_out=False)
-        perment_3 = perm_entropy(x,m=3,tau=1,_dict_out=False)
+        perment = perm_entropy(x,m=3,tau=1,_dict_out=False)
 
     else:
         sd1 = np.nan
         sd2 = np.nan
         s_area = np.nan
         sd_ratio = np.nan
-        sampent_2 = np.nan
-        sampent_3 = np.nan
-        perment_4 = np.nan
-        perment_3 = np.nan
+        sampent = np.nan
+        perment = np.nan
 
     res = dict(
         sd1 = sd1,
         sd2 = sd2,
         s_area = s_area,
         sd_ratio = sd_ratio,
-        sampen_2 = sampent_2,
-        sampen_3 = sampent_3,
-        permen_4= perment_4,
-        permen_3= perment_3
+        sample_ent = sampent,
+        perm_ent= perment
     )
 
     return res

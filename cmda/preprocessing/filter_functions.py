@@ -3,14 +3,14 @@ from scipy import signal
 
 def butter_filter(x,fs,cutoff, order = 4, btype = 'lowpass'):
     '''
-    Apply Buuterworth filter to an array elements
+    Apply a bandpass Butterworth filter to an array elements
 
     Args:
         x (array_like): 1-D array or object that can be converted to an array.
         fs (float, optional): Sampling frequency
         cutoff (float): Cutoff frequency [Hz].
         order (int, optional): The order of the filter. Defaults to 4.
-        btype ({‘lowpass’, ‘highpass’, ‘bandpass’, ‘bandstop’}, optional): Defaults to 'lowpass'.
+        btype ({‘lowpass’, ‘highpass’}, optional): Defaults to 'lowpass'.
 
     Returns:
         ndarray: filtered array
@@ -23,14 +23,18 @@ def butter_filter(x,fs,cutoff, order = 4, btype = 'lowpass'):
 
     return res
 
+def rm_outlier(x,low=200,high=2500):
+    # remove outliers based on cutoffs
+    res = np.array([rr if high >= rr >= low else np.nan for rr in x])
+    return res
 
-def rm_outliers_quantile(x, fs =1, q_up = 1, q_low = 0):
+
+def rm_outliers_quantile(x, q_up = 1, q_low = 0):
     '''
     Remove the q-th quantile of an array as outliers.
 
     Args:
         x (array_like): 1-D array or object that can be converted to an array
-        fs (float, optional): Sampling frequency
         q_up (float, optional): Upper quantile
         q_low (float, optional): lower quantile
 
@@ -58,4 +62,16 @@ def rm_outlier_std(x, low, high, win_len, step, nan_limit = 0.1):
         x = x[~np.isnan(x)]
 
     return x
+
+def interpolate_na(x, method = 'linear', limit=4, min_samples=200):
+    # Fill NaN values using an interpolation method using ```pandas.Series.interpolate```
+    if len(x)>min_samples:
+        x = pd.Series(x)
+        x.interpolate(method = method, limit=limit, limit_direction='both', inplace = True)
+        if method != 'linear':
+            x.fillna(method='bfill',limit=limit, inplace=True)
+            x.fillna(method='ffill',limit=limit, inplace=True)
+    else:
+        x = np.repeat(np.nan,len(x))
+    return np.array(x)
 

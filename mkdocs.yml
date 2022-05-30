@@ -47,7 +47,13 @@ nav:
     - Import Data:
       - ReadCSV: api/read_data/readCSV.md
       - RollingWindowCSV: api/read_data/rollingCSV.md
-    - Bulit-in Features:
+    - Built-in Preprocessing Functions:
+      - scaler: api/preprocessing/scaler.md
+      - rm_outlier: api/preprocessing/rm_outlier.md
+      - rm_outlier_quantile: api/preprocessing/rm_outlier_quantile.md
+      - butter_filter: api/preprocessing/butter_filter.md
+      - interpolate_na: api/preprocessing/interpolate_na.md
+    - Bulit-in Feature Functions:
       - Time-domain Features: 
         - mean: api/td_features/mean.md
         - median: api/td_features/median.md

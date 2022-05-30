@@ -43,7 +43,7 @@ def _nanfunction(x, func, nanfunc, nan_omit=False, min_samples=1):
     return res
 
 
-def mean(x, nan_omit=False, min_samples=1):
+def mean(x, nan_omit=False, min_samples=1, _dict_out= True):
     '''
     Compute the average of the array elements.
 
@@ -61,7 +61,9 @@ def mean(x, nan_omit=False, min_samples=1):
     res = _nanfunction(
         x, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean
     )
-    res = {'mean':res}    
+    if _dict_out:
+        res = {'mean':res}    
+
     return res
 
 
@@ -131,7 +133,7 @@ def min(x, nan_omit=False, min_samples=1):
     return res
 
 
-def median(x, nan_omit=False, min_samples=1):
+def median(x, nan_omit=False, min_samples=1,_dict_out= True):
     '''
     Compute the median of the array elements.
 
@@ -153,7 +155,9 @@ def median(x, nan_omit=False, min_samples=1):
         func=np.median,
         nanfunc=np.nanmedian,
     )
-    res = {'median':res}
+    if _dict_out:
+        res = {'median':res}
+    
     return res
 
 
@@ -259,7 +263,7 @@ def rms(x, nan_omit=False, min_samples=1):
     return res
 
 
-def zcr(x, center=True, nan_omit=False, min_samples=1):
+def zcr(x, center=True, normalized = True, nan_omit=False, min_samples=1):
     '''
     Compute the zero crossing rate of the arary elements.
 
@@ -281,24 +285,40 @@ def zcr(x, center=True, nan_omit=False, min_samples=1):
     # center the x
     x = _check_ndarray(x)
     if center:
-        x = x - _nanfunction(
-        x, nan_omit=nan_omit, min_samples=min_samples, func=np.mean, nanfunc=np.nanmean
-    )
+        x = x.copy()
+        x = x - mean(x,nan_omit=nan_omit, min_samples=min_samples,_dict_out=False)
 
     res = ((x[:-1] * x[1:]) < 0).sum()
+
+    if normalized:
+        total = np.count_nonzero(~np.isnan((x[:-1] * x[1:])))
+        res = res/total
+        
     res = {'zcr':res}
     return res
 
 
-def entropy(x, normalize = True):
+def mad(x, nan_omit=False, min_samples=5):
+    x = _check_ndarray(x)
+    res = x - median(x, nan_omit=nan_omit ,min_samples=min_samples,_dict_out=False)
+    res = np.abs(res)
+    res = np.median(res)
+
+    res = {'mad':res}
+    return res
+
+
+def entropy(x, normalize = True, _dict_out=True):
     try:
         res = stats.entropy(x, base=2)
         if normalize:
             res /= np.log2(x.size)
     except:
         res = np.nan
-
-    res = {'entropy':res}
+    
+    if _dict_out:
+        res = {'entropy':res}
+        
     return res
 
 
@@ -344,7 +364,7 @@ def sample_entropy(x, m ,std_ratio = 0.2,down_ratio = 0, _dict_out= True):
         # Save all matches minus the self-match, compute B
         b = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
         # Similar for computing A
-        x_m = _embed(x,order=m+1,delay=tau)
+        x_m = _embed(x,order=m+1,delay=1)
         a = np.sum([np.sum(np.abs(x_mi - x_m).max(axis=1) <= r) - 1 for x_mi in x_m])
         # Return SampEn
 

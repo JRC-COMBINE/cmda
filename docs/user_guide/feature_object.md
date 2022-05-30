@@ -7,7 +7,8 @@ Generally, feature extraction or engineering can be described as a time series d
 
 User can select from a wide variety of built-in features, as well as adding user-defined features. This functionality makes it possible to tailor the features based on the application.
 
-Adding the built-in features is through a dynamic attribute of the Features called ```add```. This attribute gives the user access to several built-in time-domain, spectral features, and wavelet features.
+Adding the built-in features is through a dynamic attribute of the Features called ```.add```. This attribute gives the user access to several built-in time-domain, spectral features, and wavelet features.
+All the built-in functions are created using ```NumPy``` and ```SciPy``` APIs.
 
 !!! example
     ```Python
@@ -73,6 +74,8 @@ SWT offers a handful of features that can be extracted from the transformation c
 | :-----------: | :------------------------------------: |
 | [`swt_features`](../api/fd_features/swt_features.md)       | SWT Coefficients Features |
 
+### User-Defined Functions
+Users can define and add their functions to the Features object instance via ```.udf.add```.
 
 ### Example
 A complete tutorial of implementing the feature object can be found [here](../examples/feature_object.ipynb)

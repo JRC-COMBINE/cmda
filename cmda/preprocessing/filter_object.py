@@ -13,7 +13,10 @@ class Filters:
 
     _ff_list = [
         'butter_filter',
-        'rm_outlier_quantile'
+        'rm_outlier_quantile',
+        'rm_outlier',
+        'scaler',
+        'interpolate_na'
     ]
 
     _hrv_list = [
@@ -115,21 +118,7 @@ def apply_filters(filter_obj, data: dict, fs: int = 1) -> dict:
 
 
 
-    
 
-
-def decorator_fun(func):
-    # if not isinstance(labels, (list, tuple)):
-    #     labels = [labels]
-
-    def wrapper_fun(self,x):
-        res = func(x)
-        # if not isinstance(res, (list, tuple)):
-        #     res = [res]
-        # res = dict(zip(labels, res))
-        return res
-
-    return wrapper_fun
 
 
 def _check_duplicated_key_names(res, res_all):

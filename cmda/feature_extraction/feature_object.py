@@ -25,6 +25,7 @@ class Features:
         'kurtosis',
         'rms',
         'p2p',
+        'mad',
         'zcr',
         'perm_entropy',
         'sample_entropy'

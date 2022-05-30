@@ -220,7 +220,28 @@ class _AddFeatures:
         args = _get_args(locals())
         self._add2list(args = args, func_name='rms')
 
-    def zcr(self, center=True, nan_omit=True, min_samples=1):
+    def mad(self, nan_omit=True, min_samples=5):
+        """
+        Add the "rms" function to the features instance.
+        The feature object returns the root mean square of the array elements.
+
+        Args:
+            nan_omit (bool, optional): If True, the NaN values are omitted from the array. Defaults to True.
+            min_samples (int, optional): Minimum number of non-NaN elements in the array required to run the function.
+            If the number of non-NaN elements is less than this value, the feature object returns NaN. Defaults to 1.
+        
+        Example:
+            >>> from cmda.feature_extraction import Features
+            >>> x = [1,2,-4,3,2,1,7,0,2,-1,1]
+            >>> feature = Features()
+            >>> feature.add.rms()
+            >>> feature.transform(x=x)
+            {'rms': 2.86}
+        """
+        args = _get_args(locals())
+        self._add2list(args = args, func_name='mad')
+
+    def zcr(self, center=True,normalized = True, nan_omit=True, min_samples=1):
         """
         Add the "zcr" function to the features instance.
         The feature object returns the zero crossing rate of the array elements.
@@ -773,7 +794,7 @@ class _AddFeatures:
         args = _get_args(locals())
         self._add2list(args = args, func_name='perm_entropy')
 
-    def sample_entropy(self,m=2,std_ratio=0,down_ratio=0.2):
+    def sample_entropy(self,m=2,std_ratio=0.2,down_ratio=0):
         '''
         Add "sample_entropy" function to the features instance.
         
