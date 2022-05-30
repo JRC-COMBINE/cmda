@@ -22,6 +22,7 @@ The key features are:
 * WFDB (>= 4.0.0)
 * pathos (>= 0.2.9)
 * tqdm
+* PyWavelets
 
 ### User Installation
 #### with pip
