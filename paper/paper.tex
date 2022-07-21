@@ -23,8 +23,7 @@
 \usepackage{subcaption}
 \usepackage{xcolor}
 \usepackage{algpseudocode}
-\NewDocumentCommand{\codeword}{v}{
-\texttt{\textcolor{blue}{#1}}}
+\NewDocumentCommand{\codeword}{v}{\texttt{\textcolor{blue}{#1}}}
 
 \usepackage{listings}
 
@@ -35,22 +34,22 @@
 %\date{September 9, 1985}	% Here you can change the date presented in the paper title
 %\date{} 					% Or removing it
 
-\author{ \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Pejman Farhadi Ghalati}\thanks{Use footnote for providing further
-		information about author (webpage, alternative
-		address)---\emph{not} for acknowledging funding agencies.} \\
+\author{ Pejman Farhadi Ghalati
+	% \thanks{Use footnote for providing furtherinformation about author (webpage, alternativeaddress)---\emph{not} for acknowledging funding agencies.}
+ 	\\
 	Joint Research Center for Computational Biomedicine\\
 	RWTH Aachen University\\
 	Aachen, Germany \\
 	\texttt{farhadi@combine.rwth-aachen.de} \\
 	%% examples of more authors
 	\And
-	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Younes Mueller} \\
+	Younes Mueller \\
     Joint Research Center for Computational Biomedicine\\
 	RWTH Aachen University\\
 	Aachen, Germany \\
 	\texttt{mueller@combine.rwth-aachen.de} \\
 	\And
-	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Andreas Schuppert} \\
+	Andreas Schuppert\\
     Joint Research Center for Computational Biomedicine\\
 	RWTH Aachen University\\
 	Aachen, Germany \\
@@ -76,8 +75,8 @@
 %\date{}
 
 % Uncomment to override  the `A preprint' in the header
-%\renewcommand{\headeright}{Technical Report}
-%\renewcommand{\undertitle}{Technical Report}
+\renewcommand{\headeright}{}%Technical Report}
+\renewcommand{\undertitle}{}%Technical Report}
 \renewcommand{\shorttitle}{\textbf{CMDA} Package}
 
 %%% Add PDF metadata to help others organize their library
@@ -104,7 +103,7 @@ Over the last few years, with the growth of time-series collecting and storing, 
 
 
 \section{Introduction}
-Data generation and collection in real-time is more ubiquitous than ever due to technological progress in sensors, transmission, and data storage. This has resulted in enormous datasets, namely Big data, in various fields such as engineering, medical, physical, and social sciences. While effective modeling and simulation of such datasets can offer rich information for interpretation, prediction, monitoring, training, and decision making; their scope and complexity create significant design and implementation issues \cite{frohlich_hype_2018}.\\
+Data generation and collection in real-time is more ubiquitous than ever due to technological progress in sensors, transmission, and data storage. This has resulted in enormous datasets, namely Big data, in various fields such as engineering, medical, physical, and social sciences. While effective modeling and simulation of such data sets can offer rich information for interpretation, prediction, monitoring, training, and decision making; their scope and complexity create significant design and implementation issues \cite{frohlich_hype_2018}.\\
 For instance, in the healthcare systems, continuous monitoring data have developed into a breakthrough for health diagnosis, subsequent treatment, and proactive health tracking \cite{athavale_biosignal_2017}. The recent advancements in wearable technology and monitoring systems have offered unseen opportunities for learning mechanisms of biomedical processes from temporal data as they provide data on physiological occurrences that indicate an individual’s health and comfort. 
 However, it must be taken into account that the analysis of continuous monitoring data is highly affected by data quality issues and that even complex monitoring devices can monitor only a small subset of medical parameters involved in the process under consideration. Furthermore, the required analysis strategies for monitoring data vary significantly between monitoring a few parameters assessed on dense sampling rates (e.g., ECG, EEG, or glucose data) and monitoring several parameters over hours with low sampling frequency, as in ICU. 
 On account of this, there is a significant demand for robust and easy-to-implement tools to facilitate continuous data wrangling and feature engineering.
@@ -113,15 +112,16 @@ In order to address this, we introduce the \textbf{CMDA} package to provide a co
 
 \section{Structure}
 A general workflow for continuous data analysis consists of four steps: importing the time-series records, preprocessing (missing value imputation and denoising), feature extraction, and model creation.\\
-Initially, continuous data are imported from various sources. Secondly, the imported data will be preprocessed based on their quality to verify that only the relevant data reaches the later steps. This can involve eliminating irrelevant artifacts from the data (via filtering and outlier removal techniques) and windowing signals to a set of time bins. In the final step, before modeling, significant features relevant to a particular problem are derived from acquired filtered data.\\
-Generally, feature extraction or engineering represents the masked characteristics of raw temporal data. In other words, it can be described as a set of features corresponding to the signal's specific form or pattern. Additionally, feature extraction is generally a procedure that reduces the dimensionality of an input signal or compresses its data and thus reduces the number of resources required to analyze it. Performing extraction of descriptors on a raw signal would result in low dimensional data that could accurately elaborate the input raw data and aid in developing a practical and interpretable input for machine learning tasks.\\ 
-\textbf{CMDA} offers a set of tools for the mentioned steps in a modular structure, allowing users to use modules individually in part of another project based on the application. Nevertheless, the whole process can be integrated into a pipeline, which can be executed in a parallel fashion.
-Figure \ref{fig:workflow} depicts the components of the feature engineering pipeline. The other noteworthy attribute of CMDA is that besides the built-in feature functions, user-defined functions can be added easily to the pipeline, which enables more adaptable use of the feature engineering module.
-A detailed description of the package architecture, including the data importing modules and feature extraction modules, as well as the list of the built-in feature functions, can be found in the next section along with tutorials in appendix \ref{sec:appx}.
+Initially, continuous data are imported from various sources. Secondly, the imported data will be preprocessed based on their quality to verify that only the relevant data reaches the later steps. This can involve eliminating artifacts from the data (via filtering and outlier removal techniques) and windowing signals to a set of time bins. In the final step, before modeling, significant features relevant to a particular problem are derived from acquired filtered data.\\
+Generally, the goal of feature extraction or feature engineering is to extract the masked characteristics of raw temporal data. In other words, it can be described as a set of features corresponding to the signal's specific form or pattern. Additionally, feature extraction is generally a procedure that reduces the dimensionality of an input signal or compresses its data and thus reduces the number of resources required to analyze it.
+Extracting features from a raw signal typically results in low dimensional data that can help to accurately elaborate the raw data and aid in developing a practical and interpretable input for machine learning.\\
+\textbf{CMDA} offers a set of tools for the mentioned steps in a modular structure, allowing users to use modules individually or as part of another project. The process can be integrated into a pipeline, which can be executed in a parallel fashion.
+Figure \ref{fig:workflow} depicts the components of the feature engineering pipeline. The other noteworthy attribute of CMDA is that besides the built-in feature functions, user-defined functions can be added to the pipeline. This enables more adaptable use of the feature engineering module.
+A detailed description of the package architecture, including the data importing modules and feature extraction modules, as well as the list of the built-in feature functions, can be found in the next section along with tutorials in Appendix \ref{sec:appx}.
 \begin{figure}[h]
 \includegraphics[width=0.9\textwidth]{workflow.png}
 \centering
-\caption{Illustration of the \textbf{CMDA} workflow. The pipeline consists of three components. During feature engineering, data records are imported into the pipeline consecutively or in parallel. After applying filters (if required) and feature extraction, the data features are stored in a file. The features can be used later for any ML task.}
+\caption{Illustration of the \textbf{CMDA} workflow. The pipeline consists of three components. During feature engineering, data records are imported into the pipeline consecutively or in parallel. After filtering and feature extraction, the data features are stored in a file. The features can be used later for any ML task.}
 \label{fig:workflow}
 \end{figure}
 
@@ -129,16 +129,16 @@ A detailed description of the package architecture, including the data importing
 
 \section{Architecture}
 \subsection{Data Importer Module}
-Data importer (\codeword{cmda.import_data}), the first component in the pipeline, offers tools for loading multiple CSV files from a server or local disk into the python coding environment (\codeword{cmda.import_data.ImportCSV}). It must be take into account that the CSV files must contain signals as columns and temporal instances as rows.\\
-The importer module also supports importing DAT files directly from Physionet databases (\codeword{cmda.import_data.ImportWFDB}) using WFDB package APIs \cite{xie_chen_waveform_nodate}.
-Physionet, a funded project by the National Institutes of Health, is a gigantic and expanding archive of digital recordings of physiologic signals and corresponding data for the use of medical research \cite{goldberger_physiobank_2000}.\\
+The data importer (\codeword{cmda.import_data}) is the first component in the pipeline. It offers tools for loading multiple CSV files from a server or local disk into the python coding environment (\codeword{cmda.import_data.ImportCSV}). It expects a CSV file where signals are represented by columns and time steps by rows.\\
+The importer module also supports importing DAT files directly from PhysioNet databases (\codeword{cmda.import_data.ImportWFDB}) using WFDB package APIs \cite{xie_chen_waveform_nodate}.
+PhysioNet, a funded project by the USA National Institutes of Health, is a gigantic and expanding archive of digital recordings of physiologic signals and corresponding data for the use of medical research \cite{goldberger_physiobank_2000}.\\
 The importer functions can save computation time by parallelizing the data loading process. 
-Moreover, in the case of a very long time series, if windowing a segmentation is required, A rolling window importer function performs the time binning with a defined window length and step size and distributes each window's importing process on available nodes in parallel mode. Users can access the rolling window via \codeword{cmda.import_data.RollingWindowCSV}.
- library has handful modules to import continuous data from local disk or Physionet databases.
+Further parallelization is possible with long time series, that require windowing and segmentation.
+Here, the rolling window importer function (\codeword{cmda.import_data.RollingWindowCSV}) performs time binning and distributes each window's importing process on available nodes in parallel mode.
 
 \subsection{Preprocessing Module}
-\codeword{cmda.preprocessing.Filters} is a tool for applying different filters and outlier removal functions on a numeric signal.
-User can select from a number of built-in filters, through a dynamic attribute of the \codeword{Filters} object, called \codeword{.add} that gives the user access to the following functions:
+The \codeword{cmda.preprocessing.Filters} module contains functions for applying different filters and outlier removal on a numeric signal.
+Users can select from a number of built-in filters, through a dynamic attribute of the \codeword{Filters} object, called \codeword{.add} that gives the user access to the functions in Table~\ref{tab:prep}.
 \begin{longtable}
 { |c||c|p{8 cm}|}
 %  \hline
@@ -155,16 +155,16 @@ User can select from a number of built-in filters, through a dynamic attribute o
  \codeword{interpolate}   & Interpolation    & A $linear$ or $cubic$ interpolation tool that can be used for imputing missing values in an array\\
  \hline
 \caption{Built-in preprocessing features}
-\label{tab:tdf}
+\label{tab:prep}
 \end{longtable} 
 
 
-Moreover, user-defined filters can be added easily to the \codeword{Filters} object instance via \codeword{.udf.add}. This functionality makes it possible to tailor the filters based on the application.
+Moreover, user-defined filters can be added easily to the \codeword{Filters} object instance via \codeword{.udf.add}. This functionality makes it possible to tailor the filters to the needs of the user.
 
 \subsection{Feature Extraction Module}
 \codeword{cmda.feature_extraction.Features} is a tool for extracting multiple features from a numeric time series array.
-This library provides several ready-to-use built-in time domain, spectral domain, nonlinear, and wavelet features that can be selected and added to a \codeword{Features} object instance via \codeword{.add} function.\\
-Additionally, Users can define and add their own functions to the \codeword{Features} object instance via \codeword{.udf.add}.
+It provides several ready-to-use features of time domain, spectral domain, nonlinear, and wavelet  that can be selected and added to a \codeword{Features} object instance via \codeword{.add} function.\\
+Again, users can define and add custom functions to the \codeword{Features} object instance via \codeword{.udf.add}.
 The available built-in function in the current version of the package are described in the following sections.
 
 \subsubsection{Time-domain Features}
@@ -233,7 +233,6 @@ Frequency-domain features are signal characteristics in the frequency domain, wh
  \codeword{vcf}   & Variance of central frequency    & The variance of power spectrum amplitudes from its mean frequency \cite{naik_usefulness_2012}.\\
  \hline
  \codeword{peaks}   & Peak Frequency    & The frequency at which the maximum of power spectrum occurs \cite{naik_usefulness_2012}.\\
-\\
  \hline
  \codeword{psr}   & Power spectrum ratio    & The ratio between the energy around the maximum value of the power spectrum and the whole energy of the power spectrum \cite{naik_usefulness_2012}.\\
  \hline
@@ -251,8 +250,6 @@ Frequency-domain features are signal characteristics in the frequency domain, wh
 \caption{Built-in frequency-domain features}
 \label{tab:fdf} 
 \end{longtable}
-% \caption{\label{tab:tdf} Time-domain features}
-% \end{table}
 
 \subsubsection{Entropy Features}
 Shannon entropy and its derivations are methods for estimating the complexity of dynamic systems. Table \ref{tab:entropy} shows the available entropy built-in functions in the CMDA package.
@@ -268,7 +265,7 @@ Shannon entropy and its derivations are methods for estimating the complexity of
  \hline
  \codeword{sample_entropy}   & Sample Entropy    & A technique for estimating the complexity of dynamic physiological systems based on the existence of patterns \cite{richman_physiological_2000}\\
  \hline
- \codeword{perm_entropy}   & Permutation Entropy    & A derivation of Shannon entropy, used to assess the complexity of time series data, proposed by Bandt\cite{bandt}. It quantifies the complexity of a system based on similar ordinal patterns \cite{bandt_permutation_2002}.\\
+ \codeword{perm_entropy}   & Permutation Entropy    & A derivation of Shannon entropy, used to assess the complexity of time series data, proposed by Bandt\cite{bandt_permutation_2002}. It quantifies the complexity of a system based on similar ordinal patterns \cite{bandt_permutation_2002}.\\
   \hline
  \codeword{spectral_entropy}   & Spectral Entropy    & A measure of the uniformity of a power spectrum frequency distribution \cite{pan_spectral_2009}.\\
  \hline
@@ -277,29 +274,49 @@ Shannon entropy and its derivations are methods for estimating the complexity of
 \end{longtable} 
 
 \subsubsection{Wavelet Features}
-The wavelet transform is another significant joint time to frequency transformation for feature extraction. It was developed to deal with non-stationary signals. The wavelet transform is classified as discrete or continuous. However, computing wavelet coefficients at every feasible scale, on the other hand, can be time-consuming and result in a massive amount of data. As a result, the DWT (Discrete wavelet transform) is extensively used. However, it suffers from the downsample resolution of DWT at higher decomposition levels and destroys the time invariance property. The Stationary wavelet transform (SWT) \cite{combes_real-time_1990} is a wavelet transform algorithm designed to overcome the downsample problem of DWT and preserves the time information. In the CMDA package, we offer a built-in \codeword{swt_features} function that can return a set of time-domain and frequency-domain of the decomposition levels coefficients. The following parameters can be given to the function:
-\begin{itemize}
-    \item Mean Frequency (mnf)
-    \item Power Spectrum Ratio (psr)
-    \item Peak Frequency (peak)
-    \item Median Absolute Deviation (mds)
-    \item Mean Slope (mns)
-    \item Shannon Entropy (see)
-    \item Permutation Entropy (perm-ent)
-    \item Normalized Energy (nse)
-\end{itemize}
-The explanation of each parameter can be found in Tables \ref{tab:tdf}, \ref{tab:entropy}, and \ref{tab:fdf}.
+Wavelet features stem from the wavelet transform method which transforms from joint time to frequency.
+It was developed to deal with non-stationary signals and can be used for discrete and continuous data.
+As the continuous method is resource intensive the Discrete Wavelet Transform (DWT) is extensively used. A problem lies within the downsapling resolution of DWT. With higher decomposition levels the time invariance property is no longer valid.
+The Stationary wavelet transform (SWT) \cite{combes_real-time_1990} is a wavelet transform algorithm designed to overcome the downsample problem of DWT and preserves the time information. In the CMDA package, we offer a built-in \codeword{swt_features} function that can return a set of time-domain and frequency-domain features of the decomposition levels coefficients. The parameters in Table~\ref{tab:swt} can be given to the function.
+
+\begin{longtable}
+{ |c||c|}
+ \hline
+ Feature Function & Feature\\
+ \hline
+ \codeword{mnf} & Mean Frequency\\
+ \hline
+ \codeword{psr} & Power Spectrum Ratio\\
+ \hline
+ \codeword{pea}k & Peak Frequency\\
+ \hline
+ \codeword{mds} & Median Absolute Deviation\\
+ \hline
+ \codeword{mns} & Mean Slope\\
+ \hline
+ \codeword{see} & Shannon Entropy\\
+ \hline
+ \codeword{perm-ent} & Permutation Entropy\\
+ \hline
+ \codeword{nse} & Normalized Energy\\
+ \hline
+ 
+ \hline
+ \caption{Built-in SWT features. The description of each parameter can be found in Tables \ref{tab:tdf}, \ref{tab:fdf}, and \ref{tab:entropy}.}
+\label{tab:swt}
+\end{longtable} 
 
 \subsection{Feature Engineering Pipeline}
-\codeword{cmda.pipeline.Pipeline} is a tool for importing, pre-processing and feature extraction of multiple records (files) in an automated manner.\\
-User must create an importer object instance (\codeword{cmda.import_data}), a feature object instance \codeword{cmda.preprocessing.Features}, and if required a filter object instance (\codeword{cmda.preprocessing.Filters}) and feed these instances into the pipeline. The process can be run either consecutively or in parallel using \codeword{.run} function.
+The \codeword{cmda.pipeline.Pipeline} is a tool that combines and automates importing, pre-processing and feature extraction of multiple records (files). It recieves an importer object instance (\codeword{cmda.import_data}), a feature object instance \codeword{cmda.preprocessing.Features}, and an optional filter object instance (\codeword{cmda.preprocessing.Filters}), which are combined into a pipeline. The user can run the process consecutively or in parallel by accessing its \codeword{.run} function.
 
-\section{Discussions}
-CMDA Python package is developed to implement a monitoring data analysis workflow, where its functional elements range from reading multiple data to denoising and feature extraction. Its modularity offers its implementation in various applications, supported by embedding user-defined components into the workflow. The package provides a fast and straightforward workflow with minimum coding requirements, making it feasible for the researchers to prepare ready-to-analyze extensive monitoring datasets before applying any sophisticated strategy. 
-In the future development of CMDA, we aim to add more built-in features and pre-processing functions to cover broader applications. In addition, embedding unsupervised feature engineering methods such as deep autoencoders and signal to image transformation is another objective of the package expansion. Until then, we hope CMDA benefits healthcare data expertise by providing a standard setting for monitoring data analysis.
+\section{Discussion}
+CMDA Python package is developed with the purpose of creating a monitoring data analysis workflow that includes a wide range of functional elements between from reading multiple data to denoising and feature extraction.
+It is highly flexible and through its modularity and support of user-defined features, it can be integrated in various applications. The package provides a fast and straightforward workflow with minimal coding requirements, making it feasible for researchers to prepare ready-to-analyze, extensive monitoring data sets that are suitable for sophisticated modeling strategies.
+In the future development of CMDA, we aim to add more built-in features and pre-processing functions to cover broader applications. In addition, embedding unsupervised feature engineering methods such as deep autoencoders and signal-to-image transformation is another objective of the package expansion. Until then, we hope CMDA benefits healthcare data expertise by providing a standard setting for monitoring data analysis.
 
 \bibliographystyle{abbrv}
-\bibliography{ref_cmda}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+\bibliography{references}
+
 
 
 %%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
@@ -310,19 +327,6 @@ In the future development of CMDA, we aim to add more built-in features and pre-
 % 	\newblock Real-time segmentation of on-line handwritten arabic script.
 % 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
 % 			International Conference on}, pages 417--422. IEEE, 2014.
-
-% 	\bibitem{kour2014fast}
-% 	George Kour and Raid Saabne.
-% 	\newblock Fast classification of handwritten on-line arabic characters.
-% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
-% 			International Conference of}, pages 312--318. IEEE, 2014.
-
-% 	\bibitem{hadash2018estimate}
-% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
-% 	Jacovi.
-% 	\newblock Estimate and replace: A novel approach to integrating deep neural
-% 	networks with existing applications.
-% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
 
 % \end{thebibliography}
 \appendix
@@ -354,10 +358,10 @@ In the future development of CMDA, we aim to add more built-in features and pre-
 \lstset{style=mystyle}
 
 \subsection{Feature Object} \label{ssec:feature_obj}
-\codeword{cmda.feature_extraction.Features} is a tool for extracting multiple features at the same time from a numeric signal \codeword{x}. One can select from a wide variety of built-in features, as well as adding user-defined features. This functionality makes it possible to tailor the features based on the application.
+\codeword{cmda.feature_extraction.Features} is a tool for extracting multiple features at the same time from a numeric signal. One can select from a wide variety of built-in features, as well as adding user-defined features. This functionality makes it possible to tailor the features to the need of the user.
 The following subsections show examples of time domain, frequency domain, and user-defined feature extraction.
 
-\subsubsection{Import the data}
+\subsubsection{Data Import}
 We start by using sample data contains an ECG signal and ABP (Arterial Blood Pressure) signal with a length of 10 seconds and 125 Hz sampling rate. The toy data can be accessed from \codeword{cmda.data.ecg_abp_sample}.
 
 \begin{lstlisting}[language=Python, caption=Importing a sample data]
@@ -382,17 +386,17 @@ ax2.set_xlabel("Time [seconds]")
 plt.show()
 \end{lstlisting}
 
-Output:
+The output graph can be seen in Figure~\ref{fig:pipeline}.
 \begin{figure}[h]
-\includegraphics[width=0.8\textwidth]{ecg_abp_sample.png}
+\includegraphics[width=0.75\textwidth]{ecg_abp_sample.png}
 \centering
 \caption{Imported ECG and ABP sample signals}
 \label{fig:pipeline}
 \end{figure}
 
 \subsubsection{Time-domain feature extraction}
-In this example, we extract some built-in time-domain features of the ABP signal. To start, we must call the \codeword{cmda.feature_extraction}.Features object and add the desired features using the \codeword{add} function.\\
-After adding the features, we apply the \codeword{transform} function to the signal and get the features. The \codeword{transform} function returns the extracted features as a python dictionary.
+In this example, we extract some built-in time-domain features of the ABP signal. To start, we call the \codeword{cmda.feature_extraction}. Features object and add the desired features using the \codeword{add} function.\\
+After adding the features, we apply the \codeword{transform} function to the signal which calculates the features. The \codeword{transform} function returns the extracted features as a python dictionary.
 
 \begin{lstlisting}[language=Python, caption=Time-domain feature extraction]
 from cmda.feature_extraction import Features
@@ -488,7 +492,6 @@ def quantile(x,low = 0.1,high =0.9):
     res = {"q_low":q_low, "q_high":q_high}
     return res
 
-
 # Call the Feature object
 feature = Features()
 
@@ -516,10 +519,10 @@ Output:
 
 \subsection{Multivariate Feature Extraction}
 
-In this tutorial, we show how to extract features from a multivariate signal. In the first example, we extract similar features from all the variables, and in the second part, we show how to extract different features from each variable. Please read \ref{ssec:feature_obj} on how to create a feature object first. We use the same data as used in the Feature Object tutorial (\ref{ssec:feature_obj}). The data contain two signals (ECG, ABP) with a sampling frequency = 500.
+In this example, we show how to extract features from a multivariate signal. In the first example, we extract the same features from multiple variables variables, and in the second part, we extract different features from multiple variables. How a feature object is created can be seen in Section~\ref{ssec:feature_obj}. We use the same data as used in the Feature Object example (\ref{ssec:feature_obj}). The data contain two signals (ECG, ABP) with a sampling frequency = 500.
 
 \subsubsection{Feature extraction with one feature object}
-To extract features from a dataset, we use \codeword{cmda.feature_extraction.extract_features} function. First, we create a feature object with \codeword{cmda.feature_ectraction.Features}.
+To extract features from a data set, we use \codeword{cmda.feature_extraction.extract_features} function. 
 
 \begin{lstlisting}[language=Python, caption=Multivariate feature extraction using one feature object]
 from cmda.feature_extraction import Features
@@ -601,8 +604,8 @@ Output:
 \end{lstlisting}
 
 \subsection{Feature Extraction Pipeline}
-This tutorial shows how to implement \codeword{cmda.pipeline.Pipeline} to extract features from a Physionet WFDB.
-We extract features from the ECGRDVQ database. The database contains 5232 extracted 10-second standard 12 lead ECG segments. The meta-data of the database (\codeword{ecgrdvq_metadata}), which is a dictionary consisting of the record names \codeword{record_name} and their corresponding public directories \codeword{public_dir}, is available in \codeword{cmda.data.wfdb}. The pipeline includes importing the data, applying filters to the records, and feature extraction from records. To import the data from Physionet WFDB, we use the \codeword{cmda.read_data.ReadWFDB}. We create the filtering object by \codeword{cmda.filter.Filters} and create the feature object by \codeword{cmda.feature_extraction.Features}. A detailed tutorial on creating feature objects can be found in \ref{ssec:feature_obj}.
+This example demonstrates the usage of \codeword{cmda.pipeline.Pipeline} to extract features from a PhysioNet WFDB.
+We extract features from the ECGRDVQ database. The database contains 5232 extracted 10-second standard 12 lead ECG segments. The meta-data of the database (\codeword{ecgrdvq_metadata}) is available in \codeword{cmda.data.wfdb} in form of a dictionary, containing record names under \codeword{record_name} and  their corresponding public directories \codeword{public_dir}. The pipeline imports the data, applies filters to the records, and extracts features from records. To import the data from PhysioNet WFDB, we use the function \codeword{cmda.read_data.ReadWFDB}. We create the filtering object by \codeword{cmda.filter.Filters} and create the feature object by \codeword{cmda.feature_extraction.Features}. A detailed example on creating feature objects can be found in \ref{ssec:feature_obj}.
 
 \begin{lstlisting}[language=Python, caption=Multivariate feature extraction using one feature object]
 from cmda.data.wfdb import ecgrdvq_metadata
@@ -658,7 +661,7 @@ Running the pipeline on 5232 instances...
 finished!
 \end{lstlisting}
 
-The required time for parallel running the above pipeline was around 2640 seconds for a PC with a 3,5 GHz Dual-Core Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 memory. The process included retrieving the data from Physionet data servers too.
+The required time for parallel running the above pipeline was around 2640 seconds for a PC with a 3,5 GHz Dual-Core Intel Core i7 processor and 16 GB 2133 MHz LPDDR3 memory. The process included retrieving the data from PhysioNet data servers.
 
 
 \end{document}
