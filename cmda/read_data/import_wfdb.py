@@ -29,7 +29,7 @@ class ReadWFDB:
         self.channels = channels
         self.iterators = self._generate_iterators(rec_path_list=record_names, pn_dir=pn_dir) 
 
-    def load(self,n_jobs=None):
+    def load(self,n_jobs=1):
         '''
         load the data
 

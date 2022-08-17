@@ -1,7 +1,7 @@
 import os
 from functools import partial
 from tqdm import tqdm
-import concurrent
+import concurrent.futures
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,7 @@ class ReadCSV:
         # generate the iterators using the given files_list
         self.iterators = self._generate_iterators(files_list=files_list)
 
-    def load(self,n_jobs=None):
+    def load(self,n_jobs=1):
         '''
         load the data.
 
