@@ -49,7 +49,7 @@ class _AddFilters:
             ndarray: filtered array
         '''
         args = _get_args(locals())
-        self._add2list(args = args, func_name='rm_outlier')
+        self._add2list(args = args, func_name='rm_outliers_quantile')
 
 
     def interpolate_na(self,method = 'linear', limit=4):

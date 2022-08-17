@@ -1,7 +1,8 @@
 import numpy as np
 from scipy import signal
+import pandas as pd
 
-def butter_filter(x,fs,cutoff, order = 4, btype = 'lowpass'):
+def butter_filter(x,fs,cutoff, order = 4, btype = 'lowpass', **kwargs):
     '''
     Apply a bandpass Butterworth filter to an array elements
 
@@ -23,13 +24,13 @@ def butter_filter(x,fs,cutoff, order = 4, btype = 'lowpass'):
 
     return res
 
-def rm_outlier(x,low=200,high=2500):
+def rm_outlier(x,low=200,high=2500, **kwargs):
     # remove outliers based on cutoffs
     res = np.array([rr if high >= rr >= low else np.nan for rr in x])
     return res
 
 
-def rm_outliers_quantile(x, q_up = 1, q_low = 0):
+def rm_outliers_quantile(x, q_up = 1, q_low = 0, **kwargs):
     '''
     Remove the q-th quantile of an array as outliers.
 
@@ -41,7 +42,7 @@ def rm_outliers_quantile(x, q_up = 1, q_low = 0):
     Returns:
         ndarray: Filtered array
     '''    
-    quantiles = x.quantile([q_up, q_low]).values
+    quantiles = np.quantile(x, [q_up, q_low])
     x[x < quantiles[0]] = quantiles[0]
     x[x > quantiles[1]] = quantiles[1]
 
@@ -49,7 +50,7 @@ def rm_outliers_quantile(x, q_up = 1, q_low = 0):
 
 
 
-def rm_outlier_std(x, low, high, win_len, step, nan_limit = 0.1):
+def rm_outlier_std(x, low, high, win_len, step, nan_limit = 0.1, **kwargs):
     # BP: low =2, high: 30
     # ECG: low = 0.05, high = 1.5 
     bins = get_bins(n = len(x), win_len=win_len, step = step, fs=fs)
@@ -63,7 +64,7 @@ def rm_outlier_std(x, low, high, win_len, step, nan_limit = 0.1):
 
     return x
 
-def interpolate_na(x, method = 'linear', limit=4, min_samples=200):
+def interpolate_na(x, method = 'linear', limit=4, min_samples=200, **kwargs):
     # Fill NaN values using an interpolation method using ```pandas.Series.interpolate```
     if len(x)>min_samples:
         x = pd.Series(x)

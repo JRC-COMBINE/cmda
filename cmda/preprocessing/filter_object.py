@@ -13,7 +13,7 @@ class Filters:
 
     _ff_list = [
         'butter_filter',
-        'rm_outlier_quantile',
+        'rm_outliers_quantile',
         'rm_outlier',
         'scaler',
         'interpolate_na'
@@ -54,7 +54,7 @@ class Filters:
     #     self._udf_list = {**self._udf_list, **self._add_udf(func=func)}
 
 
-    def transform(self,x,fs):
+    def transform(self,x,fs=1):
         res_all = {}
 
         for func_key in self.add._ListOfFunctions:
