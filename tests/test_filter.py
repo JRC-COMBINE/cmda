@@ -111,7 +111,10 @@ def test_multiple_filters():
     filter = Filters()
     filter.add.rm_outlier_quantile(.9,.1)
     filter.add.interpolate_na()
-    filter.add.scaler()
+    filter.add.scaler()    
     result = filter.transform(data.copy())
     
     assert all(not np.isnan(result[i]) for i in index)
+
+if __name__=="__main__":
+    test_multiple_filters()

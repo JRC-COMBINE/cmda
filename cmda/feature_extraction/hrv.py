@@ -16,8 +16,6 @@ from ..utils.utils import interpolate
 
 def hrv_time_domain_features(x, nan_lim_ratio=0.1):
 
-    # rr = rr_rm_outlier(x, low=low, high=high)
-    # nn = rr_rm_ectopic(rr,k=k, thershold=ectopic_thershold)
     nn = x.copy()
     nn = np.asfarray(nn)
     nnd = np.diff(nn)

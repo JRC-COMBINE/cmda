@@ -6,7 +6,7 @@ from scipy.interpolate import interp1d
 from ..utils.utils import _embed
 
 
-def rr_scaler(x,factor):
+def rr_scaler(x,factor, **kwargs):
     return factor*np.array(x)
 
 def rr_rm_outlier(x,low=200,high=2500):

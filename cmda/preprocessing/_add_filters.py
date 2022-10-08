@@ -16,12 +16,8 @@ class _AddFilters:
 
     def _add2list(self,args,func_name):
         func_name_ = func_name+"__0"
-
-        while func_name_ in self._ListOfFunctions:
-            func_name_splited = func_name_.split('__')
-            new_func_name = int(func_name_splited[1])+1
-            func_name_ = f'{func_name}__{str(new_func_name)}'
-
+        if func_name in self._ListOfFunctions:
+            raise NotImplementedError()
         self._ListOfFunctions[func_name_] = args
 
 

@@ -14,7 +14,7 @@ class _AddFeatures:
         self._ListOfFunctions = {}
 
     def _add2list(self,args,func_name):
-        func_name_ = func_name+"__0"
+        func_name_ = func_name
 
         while func_name_ in self._ListOfFunctions:
             func_name_splited = func_name_.split('__')
