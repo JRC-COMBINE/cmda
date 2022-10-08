@@ -222,8 +222,8 @@ class _AddFeatures:
 
     def mad(self, nan_omit=True, min_samples=5):
         """
-        Add the "rms" function to the features instance.
-        The feature object returns the root mean square of the array elements.
+        Add the "mad" function to the features instance.
+        The feature object returns the root mean absolute deviationof the array elements.
 
         Args:
             nan_omit (bool, optional): If True, the NaN values are omitted from the array. Defaults to True.

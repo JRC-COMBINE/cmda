@@ -9,22 +9,6 @@ if __name__ == "__main__":
     sys.path.append(os.path.join(this_dir, ".."))
 from cmda.data import ecg_apb_sample
 from cmda.preprocessing import Filters
-
-from cmda.data import ecg_apb_sample
-
-
-def test_sample_data():
-    data = ecg_apb_sample()
-    assert type(data) == dict
-    assert len(data) == 2
-    assert "ECG" in data
-    assert "ABP" in data
-
-
-# def test_csv
-
-from cmda.feature_extraction import Features
-from cmda.feature_extraction import extract_features
 from cmda.data import ecg_apb_sample
 
 

@@ -6,20 +6,19 @@
 2. Filter
    1. each filter
    2. user defined filter
-3. Preprocessing
-   1. HRV
-   2. Outlier
-   3. Binning
-4. Feature Extraction
+3. Feature Extraction
    1. Time Domain Features
    2. Frequency Domain Features
    3. Entropy Features
    4. Wavelet Features
-5. Pipeline
-6. Test examples
+4. Pipeline
+5. Test examples
 
 Was sind hrvp Filter?
 Warum sind die Filter so komplex??
 Warum sind bestimmte filter im code, aber nicht in der Doku & Funktionieren nicht?
 
 Condition fuer den Butterfilter
+
+* [ ] features.mns does not exist
+* [ ] mad (Mean Absolute Deviation): should be called median absolute deviation --> Documentation
