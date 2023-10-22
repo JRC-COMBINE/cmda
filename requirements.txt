@@ -1,0 +1,8 @@
+Python >=3.8
+NumPy >=1.13.3
+Pandas >=1.2.2
+Scipy >=0.19.1)
+WFDB == 4.0.0
+pathos >= 0.2.9
+tqdm
+PyWavelets
