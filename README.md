@@ -1,8 +1,8 @@
 # CMDA
 
-**CMDA** is a Python package developed for time series data research, including temporal data importing, preprocessing, and feature extraction for further analysis. 
+**CMDA**  is a Python package specifically tailored for time series data research. It streamlines tasks related to temporal data, encompassing importing, preprocessing, and feature extraction for comprehensive analysis.
 
-This tool has been developed by ***Joint Research Center for Computational Biomedicine (JRC-COMBINE)***, a joint venture of RWTH Aachen University, and funded by ***Bayer AG***.
+This tool has been developed by ***Joint Research Center for Computational Biomedicine (JRC-COMBINE)***, a research institute of RWTH Aachen University.
 
 The key features are:
 
@@ -37,7 +37,7 @@ CMDA can be directly used from GitHub by cloning the repository into a subfolder
 ```bash
 git clone https://github.com/JRC-COMBINE/cmda
 ```
-When cloning from git, you must install all required dependencies yourself:
+When cloning from git, all required dependencies must be installed as follows:
 
 ```bash
 pip install -r cmda/requirements.txt
